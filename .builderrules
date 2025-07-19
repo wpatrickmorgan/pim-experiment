@@ -322,13 +322,64 @@ Set up proper monitoring and logging for production
 Create proper backup and rollback strategies
 Implement proper SSL/TLS configuration
 
+# ===== UNIFIED APP INTEGRATION =====
+
+# Single App Architecture
+Package frontend and backend as one unified Frappe app
+Ensure single installation process with bench get-app and bench install-app
+Create unified app structure where frontend is part of the Frappe app
+Implement single-domain deployment (no separate frontend/backend URLs)
+Use same server, same session, same authentication system
+Avoid CORS issues by serving everything from the same origin
+
+# Shared Session Management
+Use Frappe's built-in session management for both frontend and backend
+Implement session-based authentication that works across all app components
+Ensure user login state is consistent between Frappe views and Next.js components
+Use the same session cookies for all authentication needs
+Implement unified logout that clears session for entire app
+Handle session expiration consistently across frontend and backend
+
+# Integrated Routing and Navigation
+Create seamless navigation between Frappe desk views and Next.js pages
+Implement unified URL structure that feels like one application
+Use Frappe's routing system to serve Next.js pages when appropriate
+Ensure breadcrumbs and navigation work consistently across the app
+Implement proper deep linking that works for both Frappe and Next.js routes
+Create unified search that works across all app content
+
+# Same-Server Communication Patterns
+Use relative URLs for all API calls (no external API endpoints)
+Implement direct server-side communication between components
+Use Frappe's built-in request handling for all data operations
+Ensure all API calls use the same authentication context
+Implement proper error handling that's consistent across the app
+Use Frappe's built-in caching and performance optimizations
+
+# Unified Data and State Management
+Ensure database changes reflect immediately across all app components
+Use Frappe's built-in real-time updates (Socket.IO) for live data sync
+Implement consistent data validation rules across frontend and backend
+Use the same DocType definitions for both API responses and frontend types
+Ensure permissions and role-based access work consistently everywhere
+Implement unified audit trails and logging across all app operations
+
 # Integration with Frappe Deployment
 Ensure Next.js frontend integrates seamlessly with Frappe bench
 Create proper build scripts that work with Frappe app installation
-Implement proper asset serving through Frappe or CDN
-Set up proper reverse proxy configuration for production
-Ensure proper session sharing between Frappe and Next.js
+Implement proper asset serving through Frappe's static file system
+Set up integrated development workflow with bench start
+Ensure proper session sharing between all app components
 Create installation scripts similar to Frappe CRM approach
+Package all frontend assets as part of the Frappe app structure
+
+# Unified Build and Asset Management
+Create build process that compiles Next.js into Frappe app structure
+Ensure all static assets are served through Frappe's asset pipeline
+Implement proper asset versioning and caching strategies
+Create unified minification and optimization for all app assets
+Ensure proper source maps and debugging for integrated development
+Implement hot reloading that works for both frontend and backend changes
 
 # ===== DEVELOPMENT WORKFLOW =====
 
