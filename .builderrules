@@ -62,7 +62,10 @@ Prefer functional programming patterns where appropriate
 # ===== API DEVELOPMENT =====
 
 # REST API Endpoints
-Place API methods in {app_name}/api/ directory
+Place API methods based on their purpose:
+- General app APIs: {app_name}/api/ directory
+- DocType-specific APIs: within DocType controller classes
+- Utility APIs: {app_name}/utils.py or dedicated modules
 Use @frappe.whitelist() decorator for all API endpoints
 Return JSON responses with consistent structure
 Implement proper error handling and status codes
@@ -99,7 +102,8 @@ Configure field validation with validation rules
 # App Metadata
 Define app_name, app_title, app_publisher, app_description, app_email
 Set app_license (typically "MIT" or "GPL")
-Configure app_include_css and app_include_js for global assets
+Configure app_include_css and app_include_js for Frappe-specific global assets
+For Next.js assets, use the unified build process (see Unified Build section)
 Set up desktop and workspace configurations
 
 # Event Hooks
@@ -108,15 +112,15 @@ Configure scheduler_events for background tasks
 Set up authentication hooks if needed
 Define custom permissions with permission_query_conditions
 
-# ===== TESTING CONVENTIONS =====
+# ===== TESTING STRATEGIES =====
 
-# Unit Tests
+# Backend Testing (Frappe)
 Create test files with test_ prefix in doctype directories
-Use frappe.test_runner for running tests
+Use frappe.test_runner for running backend tests
 Inherit from unittest.TestCase or frappe.tests.utils.FrappeTestCase
 Create test data using frappe.get_doc().insert()
 Clean up test data in tearDown() method
-Test both positive and negative scenarios
+Test both positive and negative scenarios for DocTypes and APIs
 
 # ===== SECURITY BEST PRACTICES =====
 
@@ -128,9 +132,9 @@ Validate user input to prevent injection attacks
 Use frappe.safe_decode() for user input processing
 Implement CSRF protection for forms
 
-# ===== PERFORMANCE GUIDELINES =====
+# ===== PERFORMANCE OPTIMIZATION =====
 
-# Database Operations
+# Backend Performance (Frappe)
 Use frappe.db.get_all() with specific fields instead of get_doc() for lists
 Implement database indexes for frequently queried fields
 Use frappe.db.sql() for complex queries with proper parameterization
@@ -191,12 +195,12 @@ Implement proper error boundaries for component error handling
 Use React.memo() for performance optimization when appropriate
 
 # State Management Patterns
-Use React Query (TanStack Query) for server state management
-Implement Zustand or Context API for client-side global state
+Use React Query (TanStack Query) as primary choice for server state management
+Implement Zustand for client-side global state (preferred over Context API for performance)
 Use React Hook Form for form state management
 Implement proper loading and error states for all async operations
 Use optimistic updates for better user experience
-Cache API responses appropriately with React Query
+Cache API responses with React Query's built-in caching mechanisms
 
 # ===== FRAPPE + NEXT.JS INTEGRATION =====
 
@@ -206,15 +210,15 @@ Implement proper authentication flow with Frappe sessions
 Create TypeScript interfaces for all Frappe DocType responses
 Use consistent API response handling across the application
 Implement proper error handling for Frappe API errors
-Use SWR or React Query for data fetching and caching
+Use React Query for data fetching and caching (consistent with frontend state management)
 
 # Authentication Integration
-Implement session-based authentication with Frappe backend
-Create authentication context provider for user state management
-Use Next.js middleware for route protection and authentication checks
-Implement proper login/logout flows with Frappe authentication endpoints
-Handle authentication errors and token refresh appropriately
-Store authentication state securely (httpOnly cookies recommended)
+Use Frappe's built-in session management as the primary authentication system
+Create authentication context provider that wraps Frappe session state
+Use Next.js middleware for additional route protection (secondary layer)
+Implement login/logout flows that integrate with Frappe authentication endpoints
+Handle authentication errors using Frappe's error handling patterns
+Store authentication state using Frappe's session cookies (automatically handled)
 
 # Frappe API Consumption
 Create typed API client functions for Frappe endpoints
@@ -268,17 +272,13 @@ Create consistent spacing and typography scales
 Use proper color schemes with dark/light mode support
 Implement consistent form styling and validation feedback
 
-# ===== PERFORMANCE OPTIMIZATION =====
-
-# Next.js Performance
+# Frontend Performance (Next.js)
 Use Next.js Image component for optimized image loading
 Implement proper code splitting with dynamic imports
 Use React.lazy() for component-level code splitting
 Optimize bundle size with proper tree shaking
 Implement proper caching strategies for static and dynamic content
 Use Next.js built-in performance monitoring
-
-# Frontend Performance
 Implement proper memoization with React.memo and useMemo
 Use useCallback for stable function references
 Implement virtual scrolling for large lists
@@ -286,9 +286,14 @@ Optimize re-renders with proper dependency arrays
 Use proper key props for list rendering
 Implement proper loading states and progressive enhancement
 
-# ===== TESTING STRATEGIES =====
+# Full-Stack Performance Integration
+Coordinate caching strategies between Frappe backend and Next.js frontend
+Use Frappe's built-in caching for backend operations and React Query for frontend
+Implement proper data prefetching strategies that work with both systems
+Optimize API calls to minimize round trips between frontend and backend
+Use Frappe's real-time updates to keep frontend state synchronized efficiently
 
-# Frontend Testing
+# Frontend Testing (Next.js)
 Use Jest and React Testing Library for unit and integration tests
 Implement proper test coverage for components and hooks
 Create mock implementations for Frappe API calls
@@ -296,13 +301,13 @@ Use MSW (Mock Service Worker) for API mocking in tests
 Implement proper accessibility testing with jest-axe
 Create visual regression tests with tools like Chromatic
 
-# End-to-End Testing
-Use Playwright or Cypress for E2E testing
-Test critical user flows including authentication
-Implement proper test data setup and teardown
-Test integration between Next.js frontend and Frappe backend
-Create tests for different user roles and permissions
-Implement proper error scenario testing
+# Integration and End-to-End Testing
+Use Playwright or Cypress for E2E testing across the full stack
+Test critical user flows including authentication between Frappe and Next.js
+Implement proper test data setup and teardown for both backend and frontend
+Test integration between Next.js frontend and Frappe backend APIs
+Create tests for different user roles and permissions (using Frappe's role system)
+Implement proper error scenario testing for both frontend and backend components
 
 # ===== BUILD AND DEPLOYMENT =====
 
@@ -321,6 +326,37 @@ Implement proper environment-specific configurations
 Set up proper monitoring and logging for production
 Create proper backup and rollback strategies
 Implement proper SSL/TLS configuration
+
+# ===== DECISION FRAMEWORK =====
+
+# When to Use Frappe vs Next.js Patterns
+Use Frappe patterns for:
+- Backend API endpoints and business logic
+- Database operations and DocType management
+- User authentication and session management
+- Server-side rendering of Frappe desk views
+- Background jobs and scheduled tasks
+
+Use Next.js patterns for:
+- Frontend UI components and user interactions
+- Client-side routing and navigation
+- Frontend state management and data fetching
+- Modern web UI/UX patterns
+- Client-side performance optimizations
+
+Use Hybrid Integration for:
+- Authentication (Frappe primary, Next.js middleware secondary)
+- API communication (Frappe endpoints, React Query consumption)
+- Asset management (unified build process)
+- Real-time updates (Frappe Socket.IO with React Query sync)
+
+# Technology Choice Guidelines
+State Management: React Query for server state, Zustand for client state
+Authentication: Frappe session management as primary system
+API Architecture: Frappe whitelist decorators with TypeScript interfaces
+Testing: Frappe test runner for backend, Jest/RTL for frontend, Playwright for E2E
+Performance: Frappe caching for backend, React Query caching for frontend
+Asset Management: Unified build process through Frappe's asset pipeline
 
 # ===== UNIFIED APP INTEGRATION =====
 
@@ -383,21 +419,21 @@ Implement hot reloading that works for both frontend and backend changes
 
 # ===== DEVELOPMENT WORKFLOW =====
 
-# Development Environment
-Set up proper development server configuration
-Implement hot reloading for both frontend and backend changes
-Create proper development database seeding scripts
-Set up proper debugging configuration for both frontend and backend
-Implement proper linting and formatting with ESLint and Prettier
-Create proper Git hooks for code quality enforcement
+# Integrated Development Environment
+Set up unified development server with bench start for Frappe and Next.js dev server
+Implement hot reloading that works for both frontend and backend changes
+Create development database seeding scripts that support both Frappe and Next.js needs
+Set up debugging configuration for both Python (Frappe) and TypeScript (Next.js)
+Implement linting and formatting with ESLint/Prettier for frontend, Black/isort for backend
+Create Git hooks for code quality enforcement across both codebases
 
-# Code Organization
-Follow consistent file and folder naming conventions
-Implement proper import/export patterns
-Create proper documentation for components and APIs
-Use proper commit message conventions
-Implement proper code review processes
-Create proper development guidelines and standards
+# Unified Code Organization
+Follow Frappe naming conventions for backend files, Next.js conventions for frontend
+Implement consistent import/export patterns that work across both systems
+Create documentation that covers both API endpoints and UI components
+Use conventional commit messages that clearly indicate frontend vs backend changes
+Implement code review processes that cover both architectural layers
+Maintain development guidelines that ensure consistency across the full stack
 
 # ===== DEPLOYMENT CONSIDERATIONS =====
 
