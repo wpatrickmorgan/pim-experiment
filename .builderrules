@@ -164,13 +164,198 @@ Implement proper error handling for external API calls
 Add retry logic for network operations
 Log integration activities for debugging
 
+# ===== NEXT.JS FRONTEND DEVELOPMENT =====
+
+# Project Structure and Architecture
+Follow Next.js 13+ App Router conventions with app/ directory structure
+Organize components in src/components/{feature}/{ComponentName}.tsx
+Use TypeScript for all frontend code with strict type checking
+Implement proper separation between Server Components and Client Components
+Create reusable UI components following atomic design principles
+Use barrel exports (index.ts) for clean component imports
+
+# Next.js App Router Patterns
+Use app/layout.tsx for root layout with proper metadata configuration
+Implement page.tsx files for route definitions
+Use loading.tsx, error.tsx, and not-found.tsx for UI states
+Create route groups with (groupName) for organization
+Implement parallel routes with @folder notation when needed
+Use intercepting routes with (.) notation for modals and overlays
+
+# React Component Development
+Use functional components with TypeScript interfaces for props
+Implement proper prop validation with TypeScript
+Use React hooks (useState, useEffect, useCallback, useMemo) appropriately
+Create custom hooks for reusable logic
+Implement proper error boundaries for component error handling
+Use React.memo() for performance optimization when appropriate
+
+# State Management Patterns
+Use React Query (TanStack Query) for server state management
+Implement Zustand or Context API for client-side global state
+Use React Hook Form for form state management
+Implement proper loading and error states for all async operations
+Use optimistic updates for better user experience
+Cache API responses appropriately with React Query
+
+# ===== FRAPPE + NEXT.JS INTEGRATION =====
+
+# API Integration Patterns
+Use frappe-react-sdk or custom hooks for Frappe API calls
+Implement proper authentication flow with Frappe sessions
+Create TypeScript interfaces for all Frappe DocType responses
+Use consistent API response handling across the application
+Implement proper error handling for Frappe API errors
+Use SWR or React Query for data fetching and caching
+
+# Authentication Integration
+Implement session-based authentication with Frappe backend
+Create authentication context provider for user state management
+Use Next.js middleware for route protection and authentication checks
+Implement proper login/logout flows with Frappe authentication endpoints
+Handle authentication errors and token refresh appropriately
+Store authentication state securely (httpOnly cookies recommended)
+
+# Frappe API Consumption
+Create typed API client functions for Frappe endpoints
+Use frappe.call() patterns adapted for frontend consumption
+Implement proper CSRF token handling for Frappe requests
+Create reusable hooks for common Frappe operations (get_doc, get_list, etc.)
+Handle Frappe-specific error responses and status codes
+Implement file upload functionality with Frappe file handling
+
+# Data Fetching Strategies
+Use Server Components for initial data loading when possible
+Implement Client Components for interactive data operations
+Use React Query for caching and synchronization with Frappe backend
+Implement proper loading states and skeleton components
+Handle offline scenarios and network errors gracefully
+Use optimistic updates for better perceived performance
+
+# ===== TYPESCRIPT INTEGRATION =====
+
+# Type Definitions
+Create TypeScript interfaces for all Frappe DocTypes
+Generate types from Frappe schema definitions when possible
+Use strict TypeScript configuration with proper type checking
+Implement proper typing for API responses and requests
+Create utility types for common Frappe patterns
+Use generic types for reusable components and hooks
+
+# API Type Safety
+Define interfaces for all Frappe API endpoints
+Use discriminated unions for different response types
+Implement proper error type definitions
+Create type guards for runtime type checking
+Use branded types for IDs and specific string formats
+Implement proper typing for form data and validation
+
+# ===== STYLING AND UI PATTERNS =====
+
+# CSS and Styling
+Use Tailwind CSS for utility-first styling approach
+Implement consistent design system with CSS custom properties
+Create reusable component variants with class-variance-authority
+Use CSS Modules or styled-components for component-specific styles
+Implement responsive design patterns with mobile-first approach
+Follow accessibility guidelines (WCAG 2.1) for all UI components
+
+# Component Library Integration
+Use shadcn/ui or similar component library for consistent UI
+Customize component themes to match brand requirements
+Implement proper component composition patterns
+Create consistent spacing and typography scales
+Use proper color schemes with dark/light mode support
+Implement consistent form styling and validation feedback
+
+# ===== PERFORMANCE OPTIMIZATION =====
+
+# Next.js Performance
+Use Next.js Image component for optimized image loading
+Implement proper code splitting with dynamic imports
+Use React.lazy() for component-level code splitting
+Optimize bundle size with proper tree shaking
+Implement proper caching strategies for static and dynamic content
+Use Next.js built-in performance monitoring
+
+# Frontend Performance
+Implement proper memoization with React.memo and useMemo
+Use useCallback for stable function references
+Implement virtual scrolling for large lists
+Optimize re-renders with proper dependency arrays
+Use proper key props for list rendering
+Implement proper loading states and progressive enhancement
+
+# ===== TESTING STRATEGIES =====
+
+# Frontend Testing
+Use Jest and React Testing Library for unit and integration tests
+Implement proper test coverage for components and hooks
+Create mock implementations for Frappe API calls
+Use MSW (Mock Service Worker) for API mocking in tests
+Implement proper accessibility testing with jest-axe
+Create visual regression tests with tools like Chromatic
+
+# End-to-End Testing
+Use Playwright or Cypress for E2E testing
+Test critical user flows including authentication
+Implement proper test data setup and teardown
+Test integration between Next.js frontend and Frappe backend
+Create tests for different user roles and permissions
+Implement proper error scenario testing
+
+# ===== BUILD AND DEPLOYMENT =====
+
+# Next.js Build Configuration
+Configure next.config.js for proper build optimization
+Set up proper environment variable handling
+Implement proper asset optimization and compression
+Configure proper routing and redirects
+Set up proper security headers and CSP
+Implement proper internationalization if needed
+
+# Deployment Strategies
+Create Docker configurations for containerized deployment
+Set up proper CI/CD pipelines for automated deployment
+Implement proper environment-specific configurations
+Set up proper monitoring and logging for production
+Create proper backup and rollback strategies
+Implement proper SSL/TLS configuration
+
+# Integration with Frappe Deployment
+Ensure Next.js frontend integrates seamlessly with Frappe bench
+Create proper build scripts that work with Frappe app installation
+Implement proper asset serving through Frappe or CDN
+Set up proper reverse proxy configuration for production
+Ensure proper session sharing between Frappe and Next.js
+Create installation scripts similar to Frappe CRM approach
+
+# ===== DEVELOPMENT WORKFLOW =====
+
+# Development Environment
+Set up proper development server configuration
+Implement hot reloading for both frontend and backend changes
+Create proper development database seeding scripts
+Set up proper debugging configuration for both frontend and backend
+Implement proper linting and formatting with ESLint and Prettier
+Create proper Git hooks for code quality enforcement
+
+# Code Organization
+Follow consistent file and folder naming conventions
+Implement proper import/export patterns
+Create proper documentation for components and APIs
+Use proper commit message conventions
+Implement proper code review processes
+Create proper development guidelines and standards
+
 # ===== DEPLOYMENT CONSIDERATIONS =====
 
 # Production Readiness
-Include all dependencies in requirements.txt
-Set up proper logging configuration
-Implement health check endpoints
-Configure proper error pages
+Include all dependencies in requirements.txt and package.json
+Set up proper logging configuration for both frontend and backend
+Implement health check endpoints for monitoring
+Configure proper error pages and fallbacks
 Set up database migrations in patches.txt
 Test installation and migration procedures
-
+Create proper production build and deployment scripts
+Implement proper monitoring and alerting systems
