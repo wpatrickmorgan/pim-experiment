@@ -1,117 +1,113 @@
-# PIM Experiment Repository
+# Imperium PIM - Experimental Build
 
-This is an experimental repository containing the backend components of the Imperium PIM application, copied from the main `imperium-pim` repository. This repo is designed for testing different build methods and experimenting with alternative frontend implementations.
+This is an experimental Frappe app that integrates a modern Next.js frontend with a Frappe backend for Product Information Management (PIM).
 
-## What's Included
+## Features
 
-This repository contains **only the backend/core Frappe app components**:
+- **Modern Frontend**: Next.js 13+ with TypeScript, Tailwind CSS, and React Query
+- **Frappe Backend**: Full Frappe app with API endpoints and data management
+- **Unified Installation**: Single app installation like Frappe CRM
+- **Real-time Data**: Live API integration between frontend and backend
+- **Responsive Design**: Mobile-first design with modern UI components
 
-### ✅ Included (Backend Components)
-- **Core App Files**: `setup.py`, `requirements.txt`, `MANIFEST.in`
-- **App Configuration**: `hooks.py` (modified to remove frontend references)
-- **API Endpoints**: All API modules for frontend integration
-- **Doctype Definitions**: All 8 PIM doctypes with their JSON schemas and Python controllers
-- **Module Configuration**: Desktop, workspace, and module definitions
-- **Utility Functions**: Setup, migration, and utility scripts
-- **Templates & Static Assets**: Basic template structure and public assets
+## Installation
 
-### ❌ Excluded (Frontend Components)
-- **Frontend Directory**: Complete React frontend implementation
-- **Build Scripts**: Frontend-specific build and integration scripts
-- **Frontend Documentation**: React integration guides and documentation
+### Prerequisites
+- Frappe Bench setup
+- Node.js 18+ and npm
 
-## Repository Structure
+### Install the App
 
-```
-pim-experiment/
-├── setup.py                    # Python package configuration
-├── requirements.txt             # Dependencies (frappe)
-├── MANIFEST.in                  # Package manifest
-├── README.md                    # This file
-└── imperium_pim/               # Main app directory
-    ├── __init__.py             # App version (0.0.1)
-    ├── hooks.py                # App configuration (frontend refs removed)
-    ├── modules.txt             # Module list (Pim)
-    ├── patches.txt             # Migration patches
-    ├── api.py                  # Main API endpoints
-    ├── commands.py             # Custom bench commands
-    ├── utils.py                # Utility functions
-    ├── api/                    # API modules
-    ├── config/                 # App configuration
-    ├── pim/                    # Core PIM functionality
-    │   ├── doctype/           # All 8 PIM doctypes
-    │   └── module_def/        # Module definition
-    ├── templates/              # HTML templates
-    ├── public/                 # Static assets
-    └── www/                    # Web pages
-```
+1. **Get the app:**
+   ```bash
+   bench get-app https://github.com/wpatrickmorgan/pim-experiment.git
+   ```
 
-## Purpose
+2. **Install on your site:**
+   ```bash
+   bench --site [your-site] install-app imperium_pim
+   ```
 
-This experimental repository allows for:
+3. **Build the frontend:**
+   ```bash
+   cd apps/imperium_pim/imperium_pim/frontend
+   ./build.sh
+   ```
 
-1. **Testing Alternative Build Methods**: Experiment with different ways to build and deploy the PIM backend
-2. **Frontend Experimentation**: Build alternative frontend implementations on top of the core Frappe app
-3. **Isolated Development**: Make changes without affecting the main repository
-4. **Architecture Testing**: Test different architectural approaches for the PIM system
+4. **Restart bench:**
+   ```bash
+   bench restart
+   ```
 
-## Usage
+### Access the App
 
-This is a standard Frappe app that can be installed in any Frappe/ERPNext environment:
+- **PIM Dashboard**: `http://your-site/pim`
+- **Frappe Desk**: Standard Frappe interface for backend management
 
+## Development
+
+### Frontend Development
 ```bash
-# Install the app
-bench get-app pim-experiment https://github.com/wpatrickmorgan/pim-experiment
-bench --site [site-name] install-app imperium_pim
-
-# Run migrations
-bench --site [site-name] migrate
-
-# Clear cache and restart
-bench --site [site-name] clear-cache
-bench restart
+cd apps/imperium_pim/imperium_pim/frontend
+npm install
+npm run dev
 ```
+
+### Backend Development
+Standard Frappe development workflow:
+- API endpoints in `imperium_pim/api.py`
+- DocTypes in `imperium_pim/doctype/`
+- Web pages in `imperium_pim/www/`
+
+## Architecture
+
+### Frontend (Next.js)
+- **Location**: `imperium_pim/frontend/`
+- **Framework**: Next.js 13+ with App Router
+- **Styling**: Tailwind CSS with shadcn/ui components
+- **State Management**: React Query for server state, Zustand for client state
+- **API Client**: Custom Frappe API integration
+
+### Backend (Frappe)
+- **API Endpoints**: RESTful APIs for frontend integration
+- **DocTypes**: Standard Frappe doctypes for data management
+- **Web Integration**: Serves frontend through Frappe's web system
+
+### Integration
+- Frontend builds to static files served by Frappe
+- API calls use Frappe's authentication and session management
+- CSRF protection and error handling built-in
 
 ## API Endpoints
 
-The backend provides several API endpoints for frontend integration:
-
-- `GET /api/method/imperium_pim.api.ping` - Test connectivity
+### Dashboard
 - `GET /api/method/imperium_pim.api.get_dashboard_stats` - Dashboard statistics
-- `GET /api/method/imperium_pim.api.get_vendor_list` - List all vendors
-- `GET /api/method/imperium_pim.api.get_item_list` - List all items
-- `GET /api/method/imperium_pim.api.get_attribute_list` - List all attributes
 
-## Doctypes
+### Products
+- `GET /api/method/imperium_pim.api.get_products` - Product listing with filters
+- `GET /api/method/imperium_pim.api.get_product_categories` - Product categories
+- `POST /api/method/imperium_pim.api.toggle_product_star` - Toggle product star
+- `POST /api/method/imperium_pim.api.bulk_update_products` - Bulk operations
 
-The following PIM doctypes are included:
+## Current Status
 
-1. **PIM Item** - Core product/item management
-2. **PIM Vendor** - Vendor/supplier management
-3. **PIM Attribute** - Product attribute definitions
-4. **PIM Attribute Value** - Attribute value management
-5. **PIM Vendor Attribute** - Vendor-specific attributes
-6. **PIM Vendor Attribute Mapping** - Vendor attribute mappings
-7. **PIM Vendor Attribute Value** - Vendor attribute values
-8. **PIM Vendor Attribute Value Mapping** - Vendor attribute value mappings
-
-## Notes
-
-- This repository is for **experimental purposes only**
-- No changes should be made to the original `imperium-pim` repository
-- Frontend components have been intentionally excluded
-- The `hooks.py` file has been modified to remove frontend-related configurations
-- All backend functionality remains intact and ready for use
+This is an experimental build with:
+- ✅ Working dashboard with live API data
+- ✅ Functional products page with search and filters
+- ✅ Star/unstar functionality
+- ✅ Responsive design and loading states
+- ✅ Error handling and user feedback
+- 🔄 Mock data (ready for real DocType integration)
 
 ## Next Steps
 
-Use this repository to:
-- Build alternative frontend implementations
-- Test different deployment strategies
-- Experiment with API integrations
-- Validate architectural changes
+1. **Create Real DocTypes**: Replace mock data with actual Frappe DocTypes
+2. **Add More Pages**: Categories, Orders, Analytics, etc.
+3. **User Management**: Role-based access control
+4. **File Uploads**: Image and document management
+5. **Advanced Features**: Bulk operations, import/export, etc.
 
----
+## Contributing
 
-*Created by copying backend files from imperium-pim repository, excluding all frontend components.*
+This is an experimental repository for testing build methods and integration patterns. Feel free to explore and provide feedback!
 
