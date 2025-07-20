@@ -281,5 +281,5 @@ after_migrate = "imperium_pim.utils.sync_desktop_icons"
 # Custom bench commands
 # ---------------------
 # Register custom bench commands for this app
-from imperium_pim.commands import commands
-
+# Note: Commands temporarily disabled due to pickling issues
+# from imperium_pim.commands import commands
