@@ -7,7 +7,9 @@
     <meta name="description" content="{{ description }}">
     
     <!-- Include React build CSS -->
-    <link rel="stylesheet" href="/assets/imperium_pim/_next/static/css/81d3752c4dbd3838.css">
+    {% for css_file in react_assets.css %}
+    <link rel="stylesheet" href="{{ css_file }}">
+    {% endfor %}
     
     <!-- Global configuration for the frontend app -->
     <script>
@@ -44,11 +46,26 @@
         </div>
     </div>
     
-    <!-- Include the React build files -->
-    <script src="/assets/imperium_pim/_next/static/chunks/webpack-7532e9e4e1841dc8.js"></script>
-    <script src="/assets/imperium_pim/_next/static/chunks/main-b102c8e48da37676.js"></script>
-    <script src="/assets/imperium_pim/_next/static/chunks/pages/_app-98cb51ec6f9f135f.js"></script>
-    <script src="/assets/imperium_pim/_next/static/chunks/app/page-c1cf3d08d59d0acf.js"></script>
+    <!-- Include the React build files dynamically -->
+    {% for webpack_file in react_assets.js.webpack %}
+    <script src="{{ webpack_file }}"></script>
+    {% endfor %}
+    
+    {% for framework_file in react_assets.js.framework %}
+    <script src="{{ framework_file }}"></script>
+    {% endfor %}
+    
+    {% for main_file in react_assets.js.main %}
+    <script src="{{ main_file }}"></script>
+    {% endfor %}
+    
+    {% for main_app_file in react_assets.js.main_app %}
+    <script src="{{ main_app_file }}"></script>
+    {% endfor %}
+    
+    {% for app_page in react_assets.js.app_pages %}
+    <script src="{{ app_page }}"></script>
+    {% endfor %}
     
     <style>
         @keyframes spin {
