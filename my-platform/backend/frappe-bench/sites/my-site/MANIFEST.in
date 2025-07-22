@@ -1,0 +1,19 @@
+include MANIFEST.in
+include requirements.txt
+include *.json
+include *.md
+include *.py
+include *.txt
+recursive-include imperium_pim *.css
+recursive-include imperium_pim *.csv
+recursive-include imperium_pim *.html
+recursive-include imperium_pim *.ico
+recursive-include imperium_pim *.js
+recursive-include imperium_pim *.json
+recursive-include imperium_pim *.md
+recursive-include imperium_pim *.png
+recursive-include imperium_pim *.py
+recursive-include imperium_pim *.svg
+recursive-include imperium_pim *.txt
+recursive-exclude imperium_pim *.pyc
+
