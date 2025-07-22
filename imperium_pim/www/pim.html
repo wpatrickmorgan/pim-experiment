@@ -38,7 +38,7 @@
 {% endblock %}
 
 {% block content %}
-    <!-- React app will mount here - Next.js App Router will hydrate this -->
+    <!-- React app will render here client-side (no hydration, pure CSR) -->
     <div id="__next">
         <div style="display: flex; align-items: center; justify-content: center; min-height: 100vh;">
             <div style="text-align: center;">
@@ -47,13 +47,6 @@
             </div>
         </div>
     </div>
-    
-    <!-- Initialize Next.js hydration -->
-    <script>
-        // Initialize Next.js hydration system
-        (self.__next_f = self.__next_f || []).push([0]);
-        self.__next_f.push([2, null]);
-    </script>
     
     <!-- Include the React build files dynamically -->
     {% for webpack_file in react_assets.js.webpack %}
