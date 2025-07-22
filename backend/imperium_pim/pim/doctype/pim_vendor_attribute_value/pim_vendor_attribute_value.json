@@ -1,0 +1,100 @@
+{
+ "actions": [],
+
+ "creation": "2025-07-12 20:33:21.891958",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "pim_vendor",
+  "pim_vendor_attribute",
+  "vendor_attribute_value_name",
+  "vendor_attribute_value_code",
+  "column_break_caaa",
+  "notes"
+ ],
+ "fields": [
+  {
+   "fieldname": "pim_vendor",
+   "fieldtype": "Link",
+   "in_filter": 1,
+   "label": "Vendor",
+   "options": "PIM Vendor",
+   "reqd": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "pim_vendor_attribute",
+   "fieldtype": "Link",
+   "in_filter": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Parent Attribute",
+   "options": "PIM Vendor Attribute",
+   "reqd": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "vendor_attribute_value_code",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Attribute Value Code",
+   "no_copy": 1,
+   "read_only": 1,
+   "set_only_once": 1,
+   "unique": 1
+  },
+  {
+   "bold": 1,
+   "fieldname": "vendor_attribute_value_name",
+   "fieldtype": "Data",
+   "in_filter": 1,
+   "in_global_search": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Attribute Value Name",
+   "reqd": 1,
+   "translatable": 1
+  },
+  {
+   "fieldname": "column_break_caaa",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "notes",
+   "fieldtype": "Small Text",
+   "label": "Notes",
+   "print_hide": 1,
+   "report_hide": 1
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-07-13 23:48:02.116902",
+ "modified_by": "Administrator",
+ "module": "Pim",
+ "name": "PIM Vendor Attribute Value",
+
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "show_title_field_in_link": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "vendor_attribute_value_name",
+ "track_changes": 1
+}

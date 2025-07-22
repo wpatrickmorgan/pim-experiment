@@ -1,0 +1,29 @@
+{
+ "creation": "2024-01-01 00:00:00.000000",
+ "docstatus": 0,
+ "doctype": "Page",
+ "idx": 0,
+ "modified": "2024-01-01 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Imperium PIM",
+ "name": "pim-dashboard",
+ "owner": "Administrator",
+ "page_name": "PIM Dashboard",
+ "roles": [
+  {
+   "role": "System Manager"
+  },
+  {
+   "role": "PIM Manager"
+  },
+  {
+   "role": "PIM User"
+  }
+ ],
+ "script": "// PIM Dashboard Page Script\nfrappe.pages['pim-dashboard'].on_page_load = function(wrapper) {\n\t// Clear any existing content\n\t$(wrapper).find('.layout-main-section').empty();\n\t\n\t// Create container for React app\n\tvar container = $('<div id=\"pim-dashboard-root\" style=\"height: 100vh; width: 100%;\"></div>');\n\t$(wrapper).find('.layout-main-section').append(container);\n\t\n\t// Add loading spinner\n\tcontainer.html(`\n\t\t<div class=\"pim-loading\" style=\"display: flex; justify-content: center; align-items: center; height: 100vh; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;\">\n\t\t\t<div class=\"pim-loading-spinner\" style=\"border: 4px solid #f3f3f3; border-top: 4px solid #3498db; border-radius: 50%; width: 40px; height: 40px; animation: spin 2s linear infinite; margin-right: 16px;\"></div>\n\t\t\t<div>Loading PIM Dashboard...</div>\n\t\t</div>\n\t\t<style>\n\t\t\t@keyframes spin {\n\t\t\t\t0% { transform: rotate(0deg); }\n\t\t\t\t100% { transform: rotate(360deg); }\n\t\t\t}\n\t\t</style>\n\t`);\n\t\n\t// Set global configuration for React app\n\twindow.pimConfig = {\n\t\tuser: frappe.session.user,\n\t\tcsrfToken: frappe.csrf_token,\n\t\tapiBase: '/api/method/imperium_pim.api',\n\t\tbasePath: '/app/pim-dashboard'\n\t};\n\t\n\t// Load React app assets\n\tloadPimAssets();\n};\n\nfunction loadPimAssets() {\n\t// Load CSS\n\tif (!document.querySelector('link[href*=\"pim-ui/assets/index\"]')) {\n\t\tvar cssLink = document.createElement('link');\n\t\tcssLink.rel = 'stylesheet';\n\t\tcssLink.href = '/assets/imperium_pim/pim-ui/assets/index.css';\n\t\tdocument.head.appendChild(cssLink);\n\t}\n\t\n\t// Load JS module\n\tif (!document.querySelector('script[src*=\"pim-ui/assets/index\"]')) {\n\t\tvar jsScript = document.createElement('script');\n\t\tjsScript.type = 'module';\n\t\tjsScript.src = '/assets/imperium_pim/pim-ui/assets/index.js';\n\t\tdocument.head.appendChild(jsScript);\n\t}\n}",
+ "standard": "Yes",
+ "style": "/* PIM Dashboard Page Styles */\n.page-container[data-page-route=\"pim-dashboard\"] .layout-main-section {\n\tpadding: 0 !important;\n\tmargin: 0 !important;\n\theight: 100vh;\n\toverflow: hidden;\n}\n\n.page-container[data-page-route=\"pim-dashboard\"] .page-head {\n\tdisplay: none;\n}\n\n.page-container[data-page-route=\"pim-dashboard\"] .layout-main {\n\tpadding: 0 !important;\n}\n\n#pim-dashboard-root {\n\theight: 100vh !important;\n\twidth: 100% !important;\n\toverflow: hidden;\n}",
+ "system_page": 0,
+ "title": "PIM Dashboard"
+}
+

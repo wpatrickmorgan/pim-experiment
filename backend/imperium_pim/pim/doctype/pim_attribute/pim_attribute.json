@@ -1,0 +1,109 @@
+{
+ "actions": [],
+ "autoname": "field:attribute_code",
+ "creation": "2025-07-12 20:45:52.766260",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "attribute_code",
+  "column_break_ribh",
+  "attribute_name",
+  "column_break_hamz",
+  "attribute_type",
+  "is_required",
+  "section_break_sggk",
+  "attribute_value_list",
+  "add_attribute_value"
+ ],
+ "fields": [
+  {
+   "bold": 1,
+   "fieldname": "attribute_code",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Attribute Code",
+   "no_copy": 1,
+   "reqd": 1,
+   "set_only_once": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "column_break_ribh",
+   "fieldtype": "Column Break"
+  },
+  {
+   "bold": 1,
+   "fieldname": "attribute_name",
+   "fieldtype": "Data",
+   "in_global_search": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Attribute Name",
+   "reqd": 1,
+   "translatable": 1
+  },
+  {
+   "fieldname": "column_break_hamz",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "attribute_type",
+   "fieldtype": "Select",
+   "label": "Attribute Type",
+   "options": "ShortText\nLongText\nBoolean\nSelect\nMultiSelect\nDate\nDateTime\nCheckbox\nInteger\nDecimal",
+   "reqd": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "is_required",
+   "fieldtype": "Check",
+   "in_filter": 1,
+   "label": "Is Required"
+  },
+  {
+   "fieldname": "section_break_sggk",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "attribute_value_list",
+   "fieldtype": "HTML",
+   "label": "Attribute Values"
+  },
+  {
+   "fieldname": "add_attribute_value",
+   "fieldtype": "Button",
+   "label": "Add New Value"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-07-12 21:02:14.715863",
+ "modified_by": "Administrator",
+ "module": "Pim",
+ "name": "PIM Attribute",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "show_title_field_in_link": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "attribute_name",
+ "track_changes": 1
+}

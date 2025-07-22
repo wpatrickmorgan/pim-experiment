@@ -1,0 +1,57 @@
+{% extends "templates/web.html" %}
+
+{% block title %}{{ _("PIM Dashboard") }}{% endblock %}
+
+{% block head_include %}
+<script>
+    // Inject PIM configuration for React frontend
+    window.pimConfig = {{ pim_config | tojson }};
+</script>
+{% endblock %}
+
+{% block page_content %}
+{% if show_dev_message %}
+<div class="container mt-5">
+    <div class="alert alert-info">
+        <h4>{{ _("React Frontend Setup Required") }}</h4>
+        <p>{{ _("The React frontend needs to be built. Run the following command:") }}</p>
+        <pre><code>bench --site {{ frappe.local.site }} execute imperium_pim.commands.build_frontend</code></pre>
+        <p class="mb-0">{{ _("Once built, this page will serve the React dashboard application.") }}</p>
+    </div>
+    
+    <!-- Fallback: Show basic stats while React frontend is being set up -->
+    <div class="card">
+        <div class="card-header">
+            <h5>{{ _("PIM System Status") }}</h5>
+        </div>
+        <div class="card-body">
+            <p>{{ _("API endpoints are ready for the React frontend:") }}</p>
+            <ul>
+                <li><code>/api/method/imperium_pim.api.dashboard.get_dashboard_stats</code></li>
+                <li><code>/api/method/imperium_pim.api.items.get_item_list</code></li>
+                <li><code>/api/method/imperium_pim.api.vendors.get_vendor_list</code></li>
+                <li><code>/api/method/imperium_pim.api.attributes.get_attribute_list</code></li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% else %}
+<!-- React app mounting point -->
+<div id="root">
+    <div class="d-flex justify-content-center align-items-center" style="height: 50vh;">
+        <div class="spinner-border text-primary" role="status">
+            <span class="sr-only">{{ _("Loading...") }}</span>
+        </div>
+    </div>
+</div>
+
+<!-- Load React app bundle -->
+{% for js_file in js_files %}
+<script type="module" src="{{ js_file }}"></script>
+{% endfor %}
+
+{% for css_file in css_files %}
+<link rel="stylesheet" href="{{ css_file }}">
+{% endfor %}
+{% endif %}
+{% endblock %}
