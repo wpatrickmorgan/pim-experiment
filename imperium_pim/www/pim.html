@@ -6,30 +6,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="{{ description }}">
     
-    <!-- Include Frappe's core JavaScript first -->
-    <script type="module" src="/assets/frappe/js/frappe-web.bundle.js"></script>
-    
     <!-- Include React build CSS -->
     <link rel="stylesheet" href="/assets/imperium_pim/_next/static/css/81d3752c4dbd3838.css">
     
     <!-- Global configuration for the frontend app -->
     <script>
-        // Ensure frappe is available globally
-        window.frappe = window.frappe || {};
-        
-        // Global configuration for the frontend app
-        window.FRAPPE_CONFIG = {
-            csrf_token: frappe.csrf_token || '',
-            user: frappe.session ? frappe.session.user : 'Guest',
-            api_base: '/api/method/imperium_pim.api'
-        };
-        
-        // Initialize frappe if not already done
-        if (typeof frappe !== 'undefined' && frappe.ready) {
-            frappe.ready(() => {
-                console.log('Frappe framework loaded successfully');
-            });
-        }
+        // Wait for Frappe to be available (loaded by web.html template)
+        document.addEventListener('DOMContentLoaded', function() {
+            // Ensure frappe is available globally
+            window.frappe = window.frappe || {};
+            
+            // Global configuration for the frontend app
+            window.FRAPPE_CONFIG = {
+                csrf_token: (typeof frappe !== 'undefined' && frappe.csrf_token) ? frappe.csrf_token : '',
+                user: (typeof frappe !== 'undefined' && frappe.session) ? frappe.session.user : 'Guest',
+                api_base: '/api/method/imperium_pim.api'
+            };
+            
+            // Log when Frappe is ready
+            if (typeof frappe !== 'undefined') {
+                console.log('Frappe framework available for React app');
+            } else {
+                console.warn('Frappe framework not yet available');
+            }
+        });
     </script>
 {% endblock %}
 
