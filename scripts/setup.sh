@@ -70,21 +70,21 @@ install_dependencies() {
 setup_backend() {
     print_status "Setting up Frappe backend..."
     
-    cd backend
-    
     # Install bench if not already installed
     if ! command -v bench &> /dev/null; then
         print_status "Installing Frappe Bench..."
         pip3 install frappe-bench
     fi
     
-    # Initialize frappe-bench
+    # Initialize frappe-bench in a temporary directory
     print_status "Initializing frappe-bench..."
+    mkdir -p temp_bench
+    cd temp_bench
     bench init --skip-assets --frappe-branch version-15 .
     
-    # Get imperium_pim app
-    print_status "Cloning imperium_pim app..."
-    bench get-app imperium_pim https://github.com/wpatrickmorgan/imperium-pim.git
+    # Copy our imperium_pim app into the bench
+    print_status "Installing imperium_pim app..."
+    cp -r ../backend/imperium_pim apps/
     
     # Create new site
     print_status "Creating new site: client-a.local..."
@@ -102,7 +102,12 @@ setup_backend() {
     print_status "Building Frappe assets..."
     bench build --app imperium_pim
     
+    # Move the complete bench setup to backend directory
     cd ..
+    rm -rf backend/*
+    mv temp_bench/* backend/
+    rm -rf temp_bench
+    
     print_success "Backend setup completed"
 }
 
@@ -110,17 +115,7 @@ setup_backend() {
 setup_frontend() {
     print_status "Setting up Next.js frontend..."
     
-    # Clone frontend repo
-    print_status "Cloning pim-experiment-frontend repo..."
-    if [ -d "frontend/.git" ]; then
-        rm -rf frontend/*
-        rm -rf frontend/.*
-    fi
-    
-    git clone https://github.com/wpatrickmorgan/pim-experiment-frontend.git temp_frontend
-    mv temp_frontend/* frontend/ 2>/dev/null || true
-    mv temp_frontend/.* frontend/ 2>/dev/null || true
-    rm -rf temp_frontend
+    print_status "Frontend files already available in frontend/ directory..."
     
     cd frontend
     
@@ -299,4 +294,3 @@ main() {
 
 # Run main function
 main "$@"
-

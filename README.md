@@ -1,39 +1,43 @@
-# PIM Experiment Monorepo
+# PIM Experiment - Self-Contained Monorepo
 
-A fully decoupled **Frappe + Next.js** system for Product Information Management (PIM) with automated setup and deployment.
+A **self-contained** Frappe + Next.js system for Product Information Management (PIM) with complete frontend-backend integration and automated deployment.
 
 ## 🏗️ Architecture Overview
 
-This monorepo provides a complete separation between backend and frontend:
+This monorepo contains **all the actual source code** from both repositories:
 
-- **Backend**: Frappe framework with `imperium_pim` app
-- **Frontend**: Standalone Next.js application  
-- **Proxy**: Nginx configuration for seamless integration
-- **Automation**: Shell scripts for complete environment setup
+- **Backend**: Complete Frappe backend with imperium_pim app (copied from imperium-pim repo)
+- **Frontend**: Complete Next.js application with API integration (copied from pim-experiment-frontend repo)
+- **Integration**: Fully wired React Query hooks connecting to Frappe API endpoints
+- **Deployment**: Nginx configuration and automation scripts for production setup
 
 ```
 pim-experiment/
-├── backend/                    # Frappe backend (frappe-bench)
-│   ├── apps/imperium_pim/      # PIM application code
-│   ├── sites/client-a.local/   # Frappe site configuration
-│   └── ...                     # Standard bench structure
+├── backend/                    # Complete Frappe backend files
+│   ├── imperium_pim/          # PIM app with API endpoints
+│   │   ├── api.py             # API endpoints for frontend
+│   │   ├── pim/               # PIM doctypes and logic
+│   │   └── ...                # Complete app structure
+│   ├── setup.py               # App configuration
+│   └── requirements.txt       # Python dependencies
 │
-├── frontend/                   # Next.js frontend application
-│   ├── pages/                  # Next.js pages
-│   ├── components/             # React components
-│   ├── lib/                    # Utilities and API clients
-│   └── ...                     # Standard Next.js structure
+├── frontend/                   # Complete Next.js application
+│   ├── src/
+│   │   ├── app/               # Next.js 13+ App Router
+│   │   ├── components/        # React components with real data
+│   │   └── lib/               # API client & React Query hooks
+│   ├── package.json           # Frontend dependencies
+│   └── .env.local             # API configuration
 │
 ├── nginx/                      # Nginx configuration
 │   └── client-a.conf           # Proxy configuration
 │
 ├── scripts/                    # Automation scripts
-│   ├── setup.sh                # Complete environment setup
-│   ├── build_frontend.sh       # Frontend build and deploy
-│   ├── start_backend.sh        # Backend server startup
-│   └── deploy_all.sh           # Full stack deployment
+│   ├── setup.sh                # Complete automated setup
+│   ├── build_frontend.sh       # Frontend build script
+│   ├── start_backend.sh        # Backend startup script
+│   └── deploy_all.sh           # Full deployment script
 │
-├── .env.example                # Environment configuration template
 └── README.md                   # This file
 ```
 
@@ -76,11 +80,32 @@ The setup script will:
 open http://client-a.localtest.me
 ```
 
+## 🔗 Frontend-Backend Integration
+
+The frontend and backend are fully integrated with:
+
+### API Client (`frontend/src/lib/api.ts`)
+- TypeScript API client with proper error handling
+- Frappe session cookie authentication
+- Typed interfaces for all API responses
+
+### React Query Hooks (`frontend/src/lib/hooks.ts`)
+- `usePing()` - Test backend connectivity
+- `useDashboardStats()` - Real-time dashboard metrics
+- `useProducts()` - Paginated product listings
+- `useLogin()` / `useLogout()` - Authentication
+
+### Backend API Endpoints (`backend/imperium_pim/api.py`)
+- `/api/method/imperium_pim.api.ping` - Connectivity test
+- `/api/method/imperium_pim.api.get_dashboard_stats` - Dashboard metrics
+- `/api/method/imperium_pim.api.get_products` - Product listings
+- `/api/method/imperium_pim.api.get_product` - Single product details
+
 ## 🌐 Access Points
 
 | Service | URL | Description |
 |---------|-----|-------------|
-| **Frontend** | http://client-a.localtest.me | Next.js application |
+| **Frontend** | http://client-a.localtest.me | Next.js application with real data |
 | **Backend API** | http://client-a.localtest.me/api | Frappe API endpoints |
 | **Backend Admin** | http://localhost:8000 | Direct Frappe access |
 | **Test API** | http://client-a.localtest.me/api/method/imperium_pim.api.ping | Connectivity test |
@@ -280,4 +305,3 @@ For issues and questions:
 ---
 
 **🎉 You're all set!** Visit http://client-a.localtest.me to see your decoupled PIM system in action.
-

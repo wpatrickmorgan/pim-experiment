@@ -1,0 +1,100 @@
+{
+ "actions": [],
+ "autoname": "format:{vendor_attribute}-map",
+ "creation": "2025-07-12 21:12:31.009458",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "pim_vendor",
+  "vendor_attribute",
+  "pim_attribute",
+  "column_break_xupb",
+  "mapping_confidence",
+  "approved",
+  "column_break_vbrq",
+  "notes"
+ ],
+ "fields": [
+  {
+   "fieldname": "pim_vendor",
+   "fieldtype": "Link",
+   "in_filter": 1,
+   "in_list_view": 1,
+   "label": "Vendor",
+   "options": "PIM Vendor",
+   "reqd": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "vendor_attribute",
+   "fieldtype": "Link",
+   "in_filter": 1,
+   "in_list_view": 1,
+   "label": "Vendor Attribute",
+   "options": "PIM Vendor Attribute",
+   "reqd": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "pim_attribute",
+   "fieldtype": "Link",
+   "in_filter": 1,
+   "in_list_view": 1,
+   "label": "PIM Attribute",
+   "options": "PIM Attribute",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_xupb",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "mapping_confidence",
+   "fieldtype": "Float",
+   "label": "Mapping Confidence"
+  },
+  {
+   "default": "0",
+   "fieldname": "approved",
+   "fieldtype": "Check",
+   "label": "Approved"
+  },
+  {
+   "fieldname": "column_break_vbrq",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "notes",
+   "fieldtype": "Small Text",
+   "label": "Notes"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-07-12 22:35:08.426230",
+ "modified_by": "Administrator",
+ "module": "Pim",
+ "name": "PIM Vendor Attribute Mapping",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}
