@@ -6,30 +6,54 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="{{ description }}">
     
-    <!-- Next.js App will be served here -->
+    <!-- Include Frappe's core JavaScript first -->
+    <script src="/assets/frappe/js/frappe-web.min.js"></script>
+    
+    <!-- Include React build CSS -->
+    <link rel="stylesheet" href="/assets/imperium_pim/_next/static/css/81d3752c4dbd3838.css">
+    
+    <!-- Global configuration for the frontend app -->
     <script>
+        // Ensure frappe is available globally
+        window.frappe = window.frappe || {};
+        
         // Global configuration for the frontend app
         window.FRAPPE_CONFIG = {
-            csrf_token: frappe.csrf_token,
-            user: frappe.session.user,
+            csrf_token: frappe.csrf_token || '',
+            user: frappe.session ? frappe.session.user : 'Guest',
             api_base: '/api/method/imperium_pim.api'
         };
+        
+        // Initialize frappe if not already done
+        if (typeof frappe !== 'undefined' && frappe.ready) {
+            frappe.ready(() => {
+                console.log('Frappe framework loaded successfully');
+            });
+        }
     </script>
 {% endblock %}
 
 {% block content %}
-    <!-- Next.js app will mount here -->
+    <!-- React app will mount here -->
     <div id="__next">
-        <div class="flex items-center justify-center min-h-screen">
-            <div class="text-center">
-                <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-                <p class="text-gray-600">Loading PIM Dashboard...</p>
+        <div style="display: flex; align-items: center; justify-content: center; min-height: 100vh;">
+            <div style="text-align: center;">
+                <div style="width: 48px; height: 48px; border: 2px solid #e5e7eb; border-top: 2px solid #2563eb; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 16px;"></div>
+                <p style="color: #6b7280;">Loading PIM Dashboard...</p>
             </div>
         </div>
     </div>
     
-    <!-- Include the Next.js build files -->
-    <script src="/assets/imperium_pim/frontend/build/static/js/main.js"></script>
-    <link rel="stylesheet" href="/assets/imperium_pim/frontend/build/static/css/main.css">
+    <!-- Include the React build files -->
+    <script src="/assets/imperium_pim/_next/static/chunks/webpack-7532e9e4e1841dc8.js"></script>
+    <script src="/assets/imperium_pim/_next/static/chunks/main-b102c8e48da37676.js"></script>
+    <script src="/assets/imperium_pim/_next/static/chunks/pages/_app-98cb51ec6f9f135f.js"></script>
+    <script src="/assets/imperium_pim/_next/static/chunks/app/page-c1cf3d08d59d0acf.js"></script>
+    
+    <style>
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
 {% endblock %}
-
