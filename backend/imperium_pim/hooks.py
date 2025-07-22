@@ -207,8 +207,9 @@ fixtures = ["Page"]
 
 # Request Events
 # ----------------
-# before_request = ["imperium_pim.utils.before_request"]
-# after_request = ["imperium_pim.utils.after_request"]
+# Handle CORS for separate frontend deployment
+before_request = ["imperium_pim.utils.handle_cors_preflight"]
+after_request = ["imperium_pim.utils.add_cors_headers"]
 
 # Job Events
 # ----------

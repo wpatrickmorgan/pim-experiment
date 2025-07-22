@@ -1,5 +1,17 @@
 // API client for Frappe backend integration
+// Support both relative URLs (monorepo) and absolute URLs (separate deployment)
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || '/api';
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || '';
+
+// Determine if we're in cross-origin mode
+const isCrossOrigin = API_BASE_URL.startsWith('http');
+
+console.log('API Configuration:', {
+  API_BASE_URL,
+  BACKEND_URL,
+  isCrossOrigin,
+  environment: process.env.NODE_ENV
+});
 
 export interface FrappeResponse<T = any> {
   message: T;
@@ -48,14 +60,28 @@ class ApiClient {
         ...defaultHeaders,
         ...options.headers,
       },
-      credentials: 'include', // Important for Frappe session cookies
+      // Handle credentials based on deployment mode
+      credentials: isCrossOrigin ? 'include' : 'include', // Always include for now, may need tokens later
+      // Add CORS mode for cross-origin requests
+      mode: isCrossOrigin ? 'cors' : 'same-origin',
     };
 
     try {
       const response = await fetch(url, config);
       
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        // Enhanced error handling for cross-origin requests
+        let errorMessage = `HTTP error! status: ${response.status}`;
+        
+        if (response.status === 0 || response.status === 404) {
+          errorMessage += isCrossOrigin 
+            ? ' - Check if backend server is running and CORS is configured'
+            : ' - Check if API endpoint exists';
+        } else if (response.status === 403) {
+          errorMessage += ' - Authentication required or CORS blocked';
+        }
+        
+        throw new Error(errorMessage);
       }
 
       const data: FrappeResponse<T> = await response.json();
@@ -66,7 +92,12 @@ class ApiClient {
 
       return data.message;
     } catch (error) {
-      console.error('API request failed:', error);
+      console.error('API request failed:', {
+        url,
+        error,
+        isCrossOrigin,
+        config: { ...config, headers: 'redacted' }
+      });
       throw error;
     }
   }
@@ -91,6 +122,36 @@ class ApiClient {
   // Test connectivity
   async ping() {
     return this.request<{ status: string; message: string; timestamp: string }>('/method/imperium_pim.api.ping');
+  }
+
+  // Health check for separate deployment
+  async healthCheck() {
+    try {
+      const result = await this.ping();
+      return {
+        status: 'healthy',
+        backend: 'connected',
+        timestamp: new Date().toISOString(),
+        config: {
+          apiBaseUrl: API_BASE_URL,
+          isCrossOrigin,
+          environment: process.env.NODE_ENV
+        },
+        ...result
+      };
+    } catch (error) {
+      return {
+        status: 'unhealthy',
+        backend: 'disconnected',
+        timestamp: new Date().toISOString(),
+        error: error instanceof Error ? error.message : 'Unknown error',
+        config: {
+          apiBaseUrl: API_BASE_URL,
+          isCrossOrigin,
+          environment: process.env.NODE_ENV
+        }
+      };
+    }
   }
 
   // Dashboard data
@@ -147,4 +208,3 @@ export const apiClient = new ApiClient();
 
 // React Query hooks
 export const useApi = () => apiClient;
-
