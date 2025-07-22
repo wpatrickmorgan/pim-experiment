@@ -1,9 +1,9 @@
 #!/bin/bash
-# Backend build script for separate deployment
+# Backend preparation script for standard Frappe site deployment
 
 set -e
 
-echo "🏗️  Building backend for separate deployment..."
+echo "🏗️  Preparing backend for Frappe site deployment..."
 
 # Check if we're in the backend directory
 if [ ! -f "setup.py" ]; then
@@ -15,10 +15,6 @@ fi
 python_version=$(python3 --version 2>&1 | awk '{print $2}' | cut -d. -f1,2)
 echo "🐍 Python version: $python_version"
 
-# Install Python dependencies
-echo "📦 Installing Python dependencies..."
-pip3 install -r requirements.txt
-
 # Validate imperium_pim app structure
 echo "🔍 Validating app structure..."
 if [ -f "verify_pim_structure.py" ]; then
@@ -27,41 +23,22 @@ else
     echo "⚠️  Structure validation script not found, skipping..."
 fi
 
-# Build Docker image if Dockerfile exists
-if [ -f "Dockerfile" ]; then
-    echo "🐳 Building Docker image..."
-    docker build -t pim-backend:latest .
-    echo "✅ Docker image built successfully!"
-else
-    echo "⚠️  No Dockerfile found, skipping Docker build"
-fi
-
-# Check if frappe-bench exists for local development
-if [ -d "frappe-bench" ]; then
-    echo "🔧 Setting up Frappe bench..."
-    cd frappe-bench
-    
-    # Install imperium_pim app if not already installed
-    if [ ! -d "apps/imperium_pim" ]; then
-        echo "📱 Installing imperium_pim app..."
-        bench get-app imperium_pim ../
+# Validate required files for Frappe app
+echo "🔍 Checking required Frappe app files..."
+required_files=("setup.py" "imperium_pim/hooks.py" "imperium_pim/__init__.py")
+for file in "${required_files[@]}"; do
+    if [ -f "$file" ]; then
+        echo "✅ $file found"
+    else
+        echo "❌ $file missing - required for Frappe app"
+        exit 1
     fi
-    
-    # Run migrations
-    echo "🔄 Running migrations..."
-    bench --site all migrate
-    
-    # Clear cache
-    echo "🧹 Clearing cache..."
-    bench --site all clear-cache
-    
-    cd ..
-fi
+done
 
-echo "✅ Backend build completed successfully!"
+echo "✅ Backend preparation completed successfully!"
 echo ""
-echo "Next steps:"
-echo "1. Configure your database connection"
-echo "2. Set up CORS for your frontend domain"
-echo "3. Deploy using Docker or traditional hosting"
-
+echo "Next steps for Frappe site deployment:"
+echo "1. Copy this app to your Frappe bench: bench get-app imperium_pim /path/to/this/directory"
+echo "2. Install on your site: bench --site your-site install-app imperium_pim"
+echo "3. Configure CORS for your Vercel frontend domain"
+echo "4. Run: bench --site your-site migrate"

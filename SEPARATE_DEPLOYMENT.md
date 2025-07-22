@@ -1,110 +1,90 @@
-# Separate Frontend & Backend Deployment Guide
+# Vercel Frontend + Frappe Site Backend Deployment Guide
 
-This guide explains how to deploy the PIM application with the frontend and backend on separate servers, communicating via API.
+This guide explains how to deploy the PIM application with the frontend on Vercel and backend on a standard Frappe site, communicating via API.
 
 ## 🏗️ Architecture Overview
 
 ```
-┌─────────────────┐    HTTP/HTTPS     ┌─────────────────┐
+┌─────────────────┐    HTTPS API      ┌─────────────────┐
 │   Frontend      │ ◄──────────────► │    Backend      │
-│   (Next.js)     │    API Calls      │   (Frappe)      │
+│   (Vercel)      │    Calls          │  (Frappe Site)  │
 │   Static Files  │                   │   Database      │
 └─────────────────┘                   └─────────────────┘
-     Server A                              Server B
+    Vercel CDN                        Your Server/Cloud
 ```
 
 ## 📁 Project Structure
 
 ```
 pim-experiment/
-├── frontend/                 # Next.js frontend application
+├── frontend/                 # Next.js frontend for Vercel
 │   ├── .env.production      # Production environment variables
 │   ├── .env.development     # Development environment variables
 │   ├── .env.local.example   # Environment template
+│   ├── vercel.json          # Vercel deployment configuration
+│   └── scripts/
+│       ├── build.sh         # Frontend build script
+│       └── deploy.sh        # Vercel deployment script
+├── backend/                  # Frappe app for standard deployment
+│   ├── imperium_pim/        # Main app directory
 │   ├── scripts/
-│   │   ├── build.sh         # Frontend build script
-│   │   └── deploy.sh        # Frontend deployment script
-│   └── Dockerfile           # Frontend Docker configuration
-├── backend/                  # Frappe backend application
-│   ├── .env.production      # Backend production config
-│   ├── site_config_template.json  # Frappe site configuration
-│   ├── cors_config.py       # CORS configuration utilities
-│   ├── scripts/
-│   │   ├── build.sh         # Backend build script
-│   │   └── deploy.sh        # Backend deployment script
-│   └── Dockerfile           # Backend Docker configuration
-├── deployment/
-│   └── nginx-frontend.conf  # Nginx configuration for frontend
-├── scripts/
-│   ├── deploy-frontend.sh   # Main frontend deployment
-│   └── deploy-backend.sh    # Main backend deployment
-└── docker-compose.separate.yml  # Docker Compose for testing
+│   │   ├── build.sh         # App preparation script
+│   │   └── deploy.sh        # Frappe site configuration script
+│   ├── setup.py             # Frappe app setup
+│   └── requirements.txt     # Python dependencies
+└── scripts/                  # Utility scripts
+    ├── setup.sh             # Initial setup
+    └── validate_setup.sh    # Validation scripts
 ```
 
 ## 🚀 Quick Start
 
 ### 1. Environment Configuration
 
-#### Frontend Environment Variables
+#### Frontend Environment Variables (Vercel)
 
-Create `frontend/.env.production`:
+Set these in your Vercel dashboard or update `frontend/.env.production`:
 ```bash
-# API Configuration
-API_BASE_URL=https://your-backend-domain.com/api
+# API Configuration - Your Frappe site URL
+NEXT_PUBLIC_API_BASE_URL=https://your-frappe-site.com/api
 DEPLOYMENT_MODE=separate
+VERCEL_ENV=production
 
 # Optional: Analytics, monitoring, etc.
-NEXT_PUBLIC_GA_ID=your-ga-id
+# NEXT_PUBLIC_GA_ID=your-ga-id
 ```
 
-Create `frontend/.env.development`:
+For development, update `frontend/.env.development`:
 ```bash
 # Development API Configuration
-API_BASE_URL=http://localhost:8000/api
+NEXT_PUBLIC_API_BASE_URL=http://localhost:8000/api
 DEPLOYMENT_MODE=separate
+NODE_ENV=development
 ```
 
-#### Backend Environment Variables
+#### Backend Configuration (Frappe Site)
 
-Create `backend/.env.production`:
-```bash
-# Database Configuration
-DB_HOST=your-db-host
-DB_NAME=pim_production
-DB_USER=your-db-user
-DB_PASSWORD=your-secure-password
+No separate environment files needed - configuration is handled through Frappe's standard site_config.json via the deployment script.
 
-# Frontend URLs for CORS
-FRONTEND_URLS=https://your-frontend-domain.com,https://www.your-frontend-domain.com
+### 2. Deploy Applications
 
-# Security
-ENCRYPTION_KEY=your-encryption-key-here
-```
-
-### 2. Build Applications
-
-#### Build Frontend
+#### Deploy Frontend to Vercel
 ```bash
 cd frontend
-./scripts/build.sh
+./scripts/deploy.sh vercel
 ```
 
-#### Build Backend
-```bash
-cd backend
-./scripts/build.sh
-```
+Or connect your GitHub repo to Vercel for automatic deployments.
 
-### 3. Deploy Applications
-
-#### Deploy Frontend
+#### Deploy Backend to Frappe Site
 ```bash
-./scripts/deploy-frontend.sh production
-```
+# From your Frappe bench directory
+bench get-app imperium_pim /path/to/pim-experiment/backend
+bench --site your-site install-app imperium_pim
 
-#### Deploy Backend
-```bash
-./scripts/deploy-backend.sh production
+# Configure CORS for your Vercel frontend
+cd apps/imperium_pim/backend/scripts
+./deploy.sh your-site https://your-vercel-app.vercel.app
 ```
 
 ## 🔧 Detailed Configuration
@@ -345,4 +325,3 @@ For issues with separate deployment:
 ---
 
 **Note**: Replace placeholder URLs and credentials with your actual values before deployment.
-

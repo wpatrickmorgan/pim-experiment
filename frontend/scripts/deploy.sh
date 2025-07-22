@@ -1,13 +1,13 @@
 #!/bin/bash
-# Frontend deployment script for separate deployment
+# Frontend deployment script for Vercel
 
 set -e
 
 # Configuration
-DEPLOYMENT_TARGET=${1:-"production"}
+DEPLOYMENT_TARGET=${1:-"vercel"}
 BUILD_DIR="out"
 
-echo "🚀 Deploying frontend to $DEPLOYMENT_TARGET environment..."
+echo "🚀 Deploying frontend to $DEPLOYMENT_TARGET..."
 
 # Check if build exists
 if [ ! -d "$BUILD_DIR" ]; then
@@ -16,27 +16,25 @@ if [ ! -d "$BUILD_DIR" ]; then
 fi
 
 case $DEPLOYMENT_TARGET in
-    "production")
-        echo "🌐 Deploying to production..."
-        # Add your production deployment commands here
-        # Examples:
-        # aws s3 sync out/ s3://your-bucket-name --delete
-        # rsync -avz --delete out/ user@server:/var/www/html/
-        # docker build -t frontend:latest .
-        echo "⚠️  Please configure production deployment in this script"
+    "vercel")
+        echo "🌐 Deploying to Vercel..."
+        if command -v vercel &> /dev/null; then
+            vercel --prod
+            echo "✅ Deployed to Vercel!"
+        else
+            echo "⚠️  Vercel CLI not found. Install with: npm i -g vercel"
+            echo "Or deploy via GitHub integration in Vercel dashboard"
+        fi
         ;;
     
-    "staging")
-        echo "🧪 Deploying to staging..."
-        # Add your staging deployment commands here
-        echo "⚠️  Please configure staging deployment in this script"
-        ;;
-    
-    "docker")
-        echo "🐳 Building Docker image..."
-        docker build -t pim-frontend:latest .
-        echo "✅ Docker image built successfully!"
-        echo "Run with: docker run -p 3000:3000 pim-frontend:latest"
+    "preview")
+        echo "🧪 Deploying preview to Vercel..."
+        if command -v vercel &> /dev/null; then
+            vercel
+            echo "✅ Preview deployed to Vercel!"
+        else
+            echo "⚠️  Vercel CLI not found. Install with: npm i -g vercel"
+        fi
         ;;
     
     "local")
@@ -47,10 +45,10 @@ case $DEPLOYMENT_TARGET in
     
     *)
         echo "❌ Unknown deployment target: $DEPLOYMENT_TARGET"
-        echo "Available targets: production, staging, docker, local"
+        echo "Available targets: vercel, preview, local"
+        echo "Usage: $0 <target>"
         exit 1
         ;;
 esac
 
 echo "🎉 Frontend deployment complete!"
-

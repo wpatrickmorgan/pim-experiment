@@ -1,9 +1,9 @@
 #!/bin/bash
-# Frontend build script for separate deployment
+# Frontend build script for Vercel deployment
 
 set -e
 
-echo "🏗️  Building frontend for separate deployment..."
+echo "🏗️  Building frontend for Vercel deployment..."
 
 # Check if we're in the frontend directory
 if [ ! -f "package.json" ]; then
@@ -40,8 +40,7 @@ fi
 
 echo "🎉 Frontend build complete!"
 echo ""
-echo "Next steps:"
-echo "1. Deploy the 'out' directory to your static hosting service"
-echo "2. Ensure your backend API URL is correctly configured"
-echo "3. Test the deployment with: npm run start"
-
+echo "Next steps for Vercel deployment:"
+echo "1. Connect your GitHub repo to Vercel"
+echo "2. Set environment variables in Vercel dashboard"
+echo "3. Deploy automatically on push to main branch"
