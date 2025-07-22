@@ -1,2 +1,0 @@
-# Doctype module for PIM
-
