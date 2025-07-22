@@ -25,6 +25,25 @@ const nextConfig = {
   },
   // Configure asset prefix for proper loading
   assetPrefix: process.env.NODE_ENV === 'production' ? '' : '',
+  
+  // Environment variables for separate deployment
+  env: {
+    DEPLOYMENT_MODE: process.env.DEPLOYMENT_MODE || 'monorepo',
+    BUILD_TIME: new Date().toISOString(),
+  },
+
+  // Enhanced webpack configuration for cross-origin deployment
+  webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
+    // Add environment info to build
+    config.plugins.push(
+      new webpack.DefinePlugin({
+        'process.env.BUILD_TIME': JSON.stringify(new Date().toISOString()),
+        'process.env.BUILD_ID': JSON.stringify(buildId),
+      })
+    );
+    
+    return config
+  },
 }
 
 module.exports = nextConfig
