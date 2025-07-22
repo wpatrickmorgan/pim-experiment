@@ -16,7 +16,7 @@ add_to_apps_screen = [
 		"name": "imperium_pim",
 		"logo": "/assets/imperium_pim/logo.png",
 		"title": "Imperium PIM",
-		"route": "/pim-dashboard",
+		"route": "/pim",
 		"has_permission": "imperium_pim.api.permission.has_app_permission"
 	}
 ]

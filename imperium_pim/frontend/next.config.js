@@ -6,7 +6,7 @@ const nextConfig = {
     unoptimized: true
   },
   distDir: 'build',
-  assetPrefix: '/assets/imperium_pim/frontend/build',
+  assetPrefix: '/assets/imperium_pim',
   basePath: '',
   typescript: {
     ignoreBuildErrors: false,

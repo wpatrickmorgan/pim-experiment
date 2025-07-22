@@ -45,7 +45,7 @@ class FrappeAPI {
     endpoint: string,
     data?: any
   ): Promise<T> {
-    const url = `${this.baseURL}/api/method/${endpoint}`;
+    let url = `${this.baseURL}/api/method/${endpoint}`;
     
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
@@ -160,4 +160,3 @@ class FrappeAPI {
 }
 
 export const frappeAPI = new FrappeAPI();
-
