@@ -11,34 +11,7 @@
     <link rel="stylesheet" href="{{ css_file }}">
     {% endfor %}
     
-    <!-- Next.js required data -->
-    <script id="__NEXT_DATA__" type="application/json">
-    {
-        "props": {
-            "pageProps": {}
-        },
-        "page": "/pim",
-        "query": {},
-        "buildId": "development",
-        "assetPrefix": "/assets/imperium_pim",
-        "nextExport": true,
-        "autoExport": true,
-        "isFallback": false,
-        "dynamicIds": [],
-        "err": null,
-        "gsp": false,
-        "gssp": false,
-        "customServer": false,
-        "gip": false,
-        "appGip": false,
-        "locale": "en",
-        "locales": ["en"],
-        "defaultLocale": "en",
-        "domainLocales": false,
-        "isPreview": false,
-        "runtimeConfig": {}
-    }
-    </script>
+    <!-- Next.js App Router handles hydration automatically through the JavaScript chunks -->
 
     <!-- Global configuration for the frontend app -->
     <script>
@@ -65,7 +38,7 @@
 {% endblock %}
 
 {% block content %}
-    <!-- React app will mount here -->
+    <!-- React app will mount here - Next.js App Router will hydrate this -->
     <div id="__next">
         <div style="display: flex; align-items: center; justify-content: center; min-height: 100vh;">
             <div style="text-align: center;">
@@ -74,6 +47,13 @@
             </div>
         </div>
     </div>
+    
+    <!-- Initialize Next.js hydration -->
+    <script>
+        // Initialize Next.js hydration system
+        (self.__next_f = self.__next_f || []).push([0]);
+        self.__next_f.push([2, null]);
+    </script>
     
     <!-- Include the React build files dynamically -->
     {% for webpack_file in react_assets.js.webpack %}
