@@ -1,0 +1,3 @@
+# This file ensures the backend directory is tracked by git
+# The actual frappe-bench structure will be created by the setup script
+
