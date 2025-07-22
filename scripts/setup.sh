@@ -76,38 +76,65 @@ setup_backend() {
         pip3 install frappe-bench
     fi
     
-    # Initialize frappe-bench in a temporary directory
-    print_status "Initializing frappe-bench..."
-    mkdir -p temp_bench
-    cd temp_bench
-    bench init --skip-assets --frappe-branch version-15 .
+    # Create bench directory if it doesn't exist
+    if [ ! -d "backend/frappe-bench" ]; then
+        print_status "Initializing frappe-bench..."
+        mkdir -p backend
+        cd backend
+        bench init --skip-assets --frappe-branch version-15 frappe-bench
+        cd frappe-bench
+    else
+        print_status "Using existing frappe-bench..."
+        cd backend/frappe-bench
+    fi
     
-    # Copy our imperium_pim app into the bench
+    # Copy our imperium_pim app into the bench apps directory
     print_status "Installing imperium_pim app..."
-    cp -r ../backend/imperium_pim apps/
+    if [ -d "apps/imperium_pim" ]; then
+        rm -rf apps/imperium_pim
+    fi
+    cp -r ../../backend/imperium_pim apps/
     
-    # Create new site
-    print_status "Creating new site: client-a.local..."
-    bench new-site client-a.local --no-mariadb-socket --admin-password admin
+    # Setup MariaDB if needed
+    print_status "Configuring MariaDB..."
+    sudo mysql -e "CREATE DATABASE IF NOT EXISTS \`client-a.local\`;" 2>/dev/null || true
+    sudo mysql -e "CREATE USER IF NOT EXISTS 'frappe'@'localhost' IDENTIFIED BY 'frappe';" 2>/dev/null || true
+    sudo mysql -e "GRANT ALL PRIVILEGES ON \`client-a.local\`.* TO 'frappe'@'localhost';" 2>/dev/null || true
+    sudo mysql -e "FLUSH PRIVILEGES;" 2>/dev/null || true
+    
+    # Create new site if it doesn't exist
+    if [ ! -d "sites/client-a.local" ]; then
+        print_status "Creating new site: client-a.local..."
+        bench new-site client-a.local --admin-password admin --db-name "client-a.local" --db-user frappe --db-password frappe
+    else
+        print_status "Site client-a.local already exists"
+    fi
     
     # Install app on site
     print_status "Installing imperium_pim app on site..."
     bench --site client-a.local install-app imperium_pim
     
-    # Enable CORS
-    print_status "Enabling CORS..."
-    echo '{"allow_cors": true, "cors_headers": ["Content-Type", "Authorization"]}' > sites/client-a.local/site_config.json
+    # Configure site for API access
+    print_status "Configuring site for API access..."
+    cat > sites/client-a.local/site_config.json << EOF
+{
+    "allow_cors": true,
+    "cors_headers": ["Content-Type", "Authorization", "X-Frappe-CSRF-Token"],
+    "cors_origins": ["http://client-a.localtest.me", "http://localhost:3000"],
+    "allow_guest_to_upload_files": false,
+    "disable_website_cache": true
+}
+EOF
     
     # Build assets
     print_status "Building Frappe assets..."
     bench build --app imperium_pim
     
-    # Move the complete bench setup to backend directory
-    cd ..
-    rm -rf backend/*
-    mv temp_bench/* backend/
-    rm -rf temp_bench
+    # Set proper permissions
+    print_status "Setting proper permissions..."
+    sudo chown -R $(whoami):$(whoami) .
     
+    cd ../..
     print_success "Backend setup completed"
 }
 
@@ -131,24 +158,52 @@ NEXT_PUBLIC_FILES_BASE_URL=http://client-a.localtest.me/files
 NEXT_PUBLIC_ASSETS_BASE_URL=http://client-a.localtest.me/assets
 EOF
     
-    # Build frontend
+    # Build and export frontend
     print_status "Building Next.js application..."
     npm run build
     
-    # Export static files (if using static export)
-    if npm run export 2>/dev/null; then
-        print_status "Exporting static files..."
-        # Create web directory
-        sudo mkdir -p /var/www/client-a-frontend
+    # Create web directory and copy static files
+    print_status "Deploying static files..."
+    sudo mkdir -p /var/www/client-a-frontend
+    
+    # Copy the exported static files
+    if [ -d "out" ]; then
+        print_status "Using static export output..."
         sudo cp -r out/* /var/www/client-a-frontend/
-        sudo chown -R www-data:www-data /var/www/client-a-frontend
     else
-        print_warning "Static export not available, using build output"
+        print_warning "No static export found, copying build output..."
+        # Create basic index.html for SPA
         sudo mkdir -p /var/www/client-a-frontend
-        sudo cp -r .next/static /var/www/client-a-frontend/_next/
-        sudo cp -r public/* /var/www/client-a-frontend/
-        sudo chown -R www-data:www-data /var/www/client-a-frontend
+        cat > /tmp/index.html << 'EOF'
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>PIM Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+    <div id="__next">
+        <div style="display: flex; justify-content: center; align-items: center; height: 100vh; font-family: system-ui;">
+            <div>Loading PIM Dashboard...</div>
+        </div>
+    </div>
+    <script>
+        // Redirect to development server for now
+        if (window.location.hostname === 'client-a.localtest.me') {
+            window.location.href = 'http://localhost:3000';
+        }
+    </script>
+</body>
+</html>
+EOF
+        sudo cp /tmp/index.html /var/www/client-a-frontend/
+        rm /tmp/index.html
     fi
+    
+    # Set proper permissions
+    sudo chown -R www-data:www-data /var/www/client-a-frontend
+    sudo chmod -R 755 /var/www/client-a-frontend
     
     cd ..
     print_success "Frontend setup completed"
@@ -211,36 +266,17 @@ start_services() {
     print_success "Services started"
 }
 
-# Create test API endpoint
-create_test_api() {
-    print_status "Creating test API endpoint..."
+# Verify API endpoints
+verify_api_endpoints() {
+    print_status "Verifying API endpoints..."
     
-    # Create api.py file in imperium_pim app
-    cat > backend/apps/imperium_pim/imperium_pim/api.py << 'EOF'
-import frappe
-
-@frappe.whitelist(allow_guest=True)
-def ping():
-    """Test API endpoint to verify backend connectivity"""
-    return {
-        "status": "success",
-        "message": "PIM Backend is running!",
-        "timestamp": frappe.utils.now(),
-        "site": frappe.local.site
-    }
-
-@frappe.whitelist()
-def get_dashboard_stats():
-    """Get dashboard statistics"""
-    return {
-        "total_products": 150,
-        "total_categories": 25,
-        "low_stock_items": 8,
-        "pending_orders": 12
-    }
-EOF
-    
-    print_success "Test API endpoint created"
+    # Check if API endpoints exist in the app
+    if [ -f "backend/imperium_pim/api.py" ]; then
+        print_success "API endpoints found in imperium_pim app"
+    else
+        print_error "API endpoints not found! Please check backend/imperium_pim/api.py"
+        exit 1
+    fi
 }
 
 # Main execution
@@ -259,8 +295,8 @@ main() {
     # Setup frontend  
     setup_frontend
     
-    # Create test API
-    create_test_api
+    # Verify API endpoints
+    verify_api_endpoints
     
     # Setup nginx
     setup_nginx

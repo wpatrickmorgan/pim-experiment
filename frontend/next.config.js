@@ -3,6 +3,14 @@ const nextConfig = {
   experimental: {
     appDir: true,
   },
+  // Enable static export for deployment
+  output: 'export',
+  trailingSlash: true,
+  skipTrailingSlashRedirect: true,
+  // Disable image optimization for static export
+  images: {
+    unoptimized: true
+  },
   typescript: {
     // !! WARN !!
     // Dangerously allow production builds to successfully complete even if
@@ -15,16 +23,8 @@ const nextConfig = {
     // your project has ESLint errors.
     ignoreDuringBuilds: false,
   },
-  // Configure for integration with Frappe backend
-  async rewrites() {
-    return [
-      {
-        source: '/api/:path*',
-        destination: '/api/:path*', // Keep API routes as-is for Frappe integration
-      },
-    ]
-  },
+  // Configure asset prefix for proper loading
+  assetPrefix: process.env.NODE_ENV === 'production' ? '' : '',
 }
 
 module.exports = nextConfig
-

@@ -8,7 +8,13 @@ set -e
 echo "🚀 Starting Frappe Backend..."
 echo "=============================="
 
-cd backend
+# Check if bench directory exists
+if [ ! -d "backend/frappe-bench" ]; then
+    echo "❌ Backend not initialized. Run ./scripts/setup.sh first."
+    exit 1
+fi
+
+cd backend/frappe-bench
 
 # Check if bench is initialized
 if [ ! -f "sites/currentsite.txt" ]; then
@@ -31,4 +37,3 @@ echo ""
 
 # Start bench with all processes
 bench start
-

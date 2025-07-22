@@ -46,29 +46,42 @@ pim-experiment/
 ### Prerequisites
 
 - Ubuntu/Debian Linux system
+- Python 3.8+ and Node.js 18+
 - Sudo access for nginx and system service configuration
 - Internet connection for downloading dependencies
+- At least 5GB free disk space and 2GB RAM
 
-### One-Command Setup
+### Validated Setup Process
+
+#### Step 1: Validate System Requirements
 
 ```bash
-# Clone the repository
-git clone https://github.com/wpatrickmorgan/pim-experiment.git
-cd pim-experiment
+# Check if your system meets all requirements
+./scripts/validate_setup.sh
+```
 
-# Run the complete setup
-chmod +x scripts/setup.sh
-./scripts/setup.sh
+#### Step 2: Run Setup
+
+```bash
+# Run the automated setup
+chmod +x scripts/setup.sh && ./scripts/setup.sh
 ```
 
 The setup script will:
-1. ✅ Install all system dependencies (Python, Node.js, Nginx, MariaDB, Redis)
-2. ✅ Initialize Frappe backend with `imperium_pim` app
-3. ✅ Clone and configure Next.js frontend
-4. ✅ Set up Nginx proxy configuration
-5. ✅ Configure local domain (`client-a.localtest.me`)
-6. ✅ Create test API endpoints
-7. ✅ Start all required services
+1. ✅ Install system dependencies (Python, Node.js, MariaDB, Redis, Nginx)
+2. ✅ Initialize frappe-bench with Frappe v15 in backend/frappe-bench/
+3. ✅ Install imperium_pim app with all PIM doctypes and API endpoints
+4. ✅ Create and configure client-a.local site with proper CORS settings
+5. ✅ Build and deploy Next.js frontend with static export
+6. ✅ Configure Nginx proxy for seamless frontend-backend integration
+7. ✅ Start all required services and validate installation
+
+#### Step 3: Test Installation
+
+```bash
+# Verify everything is working correctly
+./scripts/test_installation.sh
+```
 
 ### Start the Application
 
@@ -161,6 +174,71 @@ cd ..
 2. Add your function with `@frappe.whitelist()` decorator
 3. Restart backend: `./scripts/start_backend.sh`
 4. Test: `http://client-a.localtest.me/api/method/imperium_pim.api.your_function`
+
+## 🔧 Troubleshooting
+
+### Common Issues
+
+#### Setup Script Fails
+```bash
+# Check system requirements first
+./scripts/validate_setup.sh
+
+# Check logs for specific errors
+sudo tail -f /var/log/nginx/error.log
+```
+
+#### Backend Won't Start
+```bash
+# Check if services are running
+sudo systemctl status mariadb redis-server nginx
+
+# Check database connection
+mysql -u frappe -pfrappe -e "SHOW DATABASES;"
+
+# Check bench status
+cd backend/frappe-bench
+bench doctor
+```
+
+#### Frontend Not Loading
+```bash
+# Check nginx configuration
+sudo nginx -t
+
+# Check static files
+ls -la /var/www/client-a-frontend/
+
+# Check permissions
+sudo chown -R www-data:www-data /var/www/client-a-frontend
+```
+
+#### API Calls Failing
+```bash
+# Test backend directly
+curl http://localhost:8000/api/method/imperium_pim.api.ping
+
+# Check CORS configuration
+cat backend/frappe-bench/sites/client-a.local/site_config.json
+```
+
+#### Port Conflicts
+```bash
+# Check what's using ports
+sudo netstat -tulpn | grep -E ':(80|3000|8000|3306|6379)'
+
+# Kill conflicting processes if needed
+sudo pkill -f "process_name"
+```
+
+### Getting Help
+
+1. **Check validation**: Run `./scripts/validate_setup.sh`
+2. **Run tests**: Run `./scripts/test_installation.sh`
+3. **Check logs**: 
+   - Nginx: `sudo tail -f /var/log/nginx/error.log`
+   - Backend: `cd backend/frappe-bench && bench logs`
+4. **Reset installation**: Remove `backend/frappe-bench/` and run setup again
 
 ## 🌍 Environment Configuration
 
