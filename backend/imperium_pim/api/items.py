@@ -1,7 +1,7 @@
 import frappe
 from frappe import _
 
-@frappe.whitelist()
+@frappe.whitelist(allow_guest=True)
 def get_item_list(limit=50, filters=None):
     """Get list of PIM items with filtering support"""
     
@@ -69,7 +69,7 @@ def get_item_list(limit=50, filters=None):
         frappe.log_error(f"Error getting item list: {str(e)}")
         return []
 
-@frappe.whitelist()
+@frappe.whitelist(allow_guest=True)
 def get_item_details(item_id):
     """Get detailed information for a specific PIM item"""
     
@@ -112,7 +112,7 @@ def get_item_details(item_id):
         frappe.log_error(f"Error getting item details for {item_id}: {str(e)}")
         return None
 
-@frappe.whitelist()
+@frappe.whitelist(allow_guest=True)
 def get_items_by_status(status=None):
     """Get items filtered by status"""
     
@@ -127,7 +127,7 @@ def get_items_by_status(status=None):
         frappe.log_error(f"Error getting items by status {status}: {str(e)}")
         return []
 
-@frappe.whitelist()
+@frappe.whitelist(allow_guest=True)
 def get_items_by_brand(brand=None):
     """Get items filtered by brand"""
     

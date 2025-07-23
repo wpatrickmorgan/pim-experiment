@@ -48,22 +48,22 @@ def get_api_info():
     }
 
 # Alias methods for backward compatibility and easier access
-@frappe.whitelist()
+@frappe.whitelist(allow_guest=True)
 def get_stats():
     """Alias for get_dashboard_stats"""
     return dashboard.get_dashboard_stats()
 
-@frappe.whitelist()
+@frappe.whitelist(allow_guest=True)
 def get_items(limit=50, offset=0):
     """Alias for get_item_list with pagination"""
     return items.get_item_list(limit=limit)
 
-@frappe.whitelist()
+@frappe.whitelist(allow_guest=True)
 def get_products(limit=50, offset=0):
     """Alias for get_item_list (products = items)"""
     return items.get_item_list(limit=limit)
 
-@frappe.whitelist()
+@frappe.whitelist(allow_guest=True)
 def get_dashboard_data():
     """Get comprehensive dashboard data"""
     try:

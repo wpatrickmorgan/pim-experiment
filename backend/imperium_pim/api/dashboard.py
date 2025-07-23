@@ -2,7 +2,7 @@ import frappe
 from frappe import _
 from frappe.utils import today, add_months, add_days, getdate
 
-@frappe.whitelist()
+@frappe.whitelist(allow_guest=True)
 def get_dashboard_stats():
     """Get dashboard statistics for PIM system"""
     
@@ -74,7 +74,7 @@ def get_dashboard_stats():
             'vendors_this_month': 0
         }
 
-@frappe.whitelist()
+@frappe.whitelist(allow_guest=True)
 def get_recent_items(limit=10):
     """Get recently created/modified PIM items"""
     
@@ -107,7 +107,7 @@ def get_recent_items(limit=10):
         frappe.log_error(f"Error getting recent items: {str(e)}")
         return []
 
-@frappe.whitelist()
+@frappe.whitelist(allow_guest=True)
 def get_recent_vendors(limit=10):
     """Get recently created/modified PIM vendors"""
     
