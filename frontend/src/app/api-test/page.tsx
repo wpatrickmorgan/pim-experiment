@@ -1,12 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { api } from '@/lib/api';
 
 interface TestResult {
   name: string;
   status: 'pending' | 'success' | 'error';
-  result?: any;
+  result?: unknown;
   error?: string;
   duration?: number;
 }
@@ -15,7 +15,7 @@ export default function ApiTestPage() {
   const [tests, setTests] = useState<TestResult[]>([]);
   const [isRunning, setIsRunning] = useState(false);
 
-  const runTest = async (name: string, testFn: () => Promise<any>) => {
+  const runTest = async (name: string, testFn: () => Promise<unknown>) => {
     const startTime = Date.now();
     setTests(prev => prev.map(t => t.name === name ? { ...t, status: 'pending' as const } : t));
     

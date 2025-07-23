@@ -13,7 +13,7 @@ console.log('API Configuration:', {
   environment: process.env.NODE_ENV
 });
 
-export interface FrappeResponse<T = any> {
+export interface FrappeResponse<T = unknown> {
   message: T;
   exc?: string;
   exc_type?: string;
@@ -213,7 +213,7 @@ class ApiClient {
 
   async getList(doctype: string, options: {
     fields?: string[];
-    filters?: Record<string, any>;
+    filters?: Record<string, unknown>;
     limit?: number;
     offset?: number;
     order_by?: string;
@@ -243,6 +243,7 @@ class ApiClient {
 
 // Export singleton instance
 export const apiClient = new ApiClient();
+export const api = apiClient; // Alias for convenience
 
 // React Query hooks
 export const useApi = () => apiClient;
