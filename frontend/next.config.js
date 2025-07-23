@@ -1,8 +1,5 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  experimental: {
-    appDir: true,
-  },
   // Enable static export for deployment
   output: 'export',
   trailingSlash: true,
@@ -29,7 +26,6 @@ const nextConfig = {
   // Environment variables for separate deployment
   env: {
     DEPLOYMENT_MODE: process.env.DEPLOYMENT_MODE || 'monorepo',
-    BUILD_TIME: new Date().toISOString(),
   },
 
   // Enhanced webpack configuration for cross-origin deployment

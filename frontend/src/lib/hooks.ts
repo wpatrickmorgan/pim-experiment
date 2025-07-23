@@ -1,6 +1,6 @@
 // React Query hooks for API integration
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { apiClient, DashboardStats, Product } from './api';
+import { apiClient } from './api';
 
 // Query keys
 export const queryKeys = {
@@ -73,4 +73,3 @@ export function useLogout() {
     },
   });
 }
-

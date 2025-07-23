@@ -218,7 +218,7 @@ export function ProductsTable() {
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex items-center space-x-1">
-                      <Image className="h-4 w-4 text-blue-600" />
+                      <Image className="h-4 w-4 text-blue-600" aria-label="Product images" />
                       <span className="text-sm text-blue-600">
                         {product.images}
                       </span>
