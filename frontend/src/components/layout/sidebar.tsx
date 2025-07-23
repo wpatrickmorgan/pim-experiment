@@ -13,7 +13,6 @@ import {
   BarChart3,
   Settings,
   Search,
-  Bell,
 } from "lucide-react";
 
 const navigation = [

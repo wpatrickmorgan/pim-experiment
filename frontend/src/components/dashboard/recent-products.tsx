@@ -25,19 +25,6 @@ function formatDate(dateString: string) {
   return date.toLocaleDateString();
 }
 
-function getStatusVariant(status: string) {
-  switch (status) {
-    case "Active":
-      return "success";
-    case "Draft":
-      return "draft";
-    case "Review":
-      return "warning";
-    default:
-      return "default";
-  }
-}
-
 export function RecentProducts() {
   const { data: products, isLoading, error } = useProducts(10, 0);
 

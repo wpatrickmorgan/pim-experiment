@@ -137,7 +137,7 @@ class ApiClient {
           isCrossOrigin,
           environment: process.env.NODE_ENV
         },
-        ...result
+        pingResult: result
       };
     } catch (error) {
       return {
