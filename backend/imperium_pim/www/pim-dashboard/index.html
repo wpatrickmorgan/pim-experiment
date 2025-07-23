@@ -13,10 +13,9 @@
 {% if show_dev_message %}
 <div class="container mt-5">
     <div class="alert alert-info">
-        <h4>{{ _("React Frontend Setup Required") }}</h4>
-        <p>{{ _("The React frontend needs to be built. Run the following command:") }}</p>
-        <pre><code>bench --site {{ frappe.local.site }} execute imperium_pim.commands.build_frontend</code></pre>
-        <p class="mb-0">{{ _("Once built, this page will serve the React dashboard application.") }}</p>
+        <h4>{{ _("Frontend Deployed Separately") }}</h4>
+        <p>{{ _("The React frontend is deployed on Vercel and communicates with this backend via API.") }}</p>
+        <p class="mb-0">{{ _("This page shows the API endpoints available for the frontend application.") }}</p>
     </div>
     
     <!-- Fallback: Show basic stats while React frontend is being set up -->
