@@ -1,13 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Enable static export for deployment
-  output: 'export',
-  trailingSlash: true,
-  skipTrailingSlashRedirect: true,
-  // Disable image optimization for static export
-  images: {
-    unoptimized: true
-  },
+  // Standard Next.js configuration for Vercel deployment
   typescript: {
     // !! WARN !!
     // Dangerously allow production builds to successfully complete even if
@@ -20,12 +13,25 @@ const nextConfig = {
     // your project has ESLint errors.
     ignoreDuringBuilds: false,
   },
-  // Configure asset prefix for proper loading
-  assetPrefix: process.env.NODE_ENV === 'production' ? '' : '',
   
   // Environment variables for separate deployment
   env: {
     DEPLOYMENT_MODE: process.env.DEPLOYMENT_MODE || 'monorepo',
+  },
+
+  // CORS headers for API communication with Frappe backend
+  async headers() {
+    return [
+      {
+        source: '/api/:path*',
+        headers: [
+          { key: 'Access-Control-Allow-Credentials', value: 'true' },
+          { key: 'Access-Control-Allow-Origin', value: process.env.NEXT_PUBLIC_API_BASE_URL || '*' },
+          { key: 'Access-Control-Allow-Methods', value: 'GET,OPTIONS,PATCH,DELETE,POST,PUT' },
+          { key: 'Access-Control-Allow-Headers', value: 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version' },
+        ],
+      },
+    ]
   },
 
   // Enhanced webpack configuration for cross-origin deployment
