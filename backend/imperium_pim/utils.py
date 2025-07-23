@@ -36,7 +36,6 @@ If the module still doesn't appear:
 """
 
 import frappe
-from frappe.utils import get_site_config
 import json
 
 
@@ -75,7 +74,7 @@ def handle_cors_preflight():
     """
     if frappe.request.method == "OPTIONS":
         # Get site configuration
-        site_config = get_site_config()
+        site_config = frappe.get_site_config()
         
         # Get origin from request
         origin = frappe.get_request_header("Origin")
@@ -107,7 +106,7 @@ def add_cors_headers():
     This function is called after each request via hooks.py
     """
     # Get site configuration
-    site_config = get_site_config()
+    site_config = frappe.get_site_config()
     
     # Get origin from request
     origin = frappe.get_request_header("Origin")
@@ -149,7 +148,7 @@ def setup_cors_for_site(frontend_urls=None):
             "https://your-frontend-domain.com",  # Production
         ]
     
-    site_config = get_site_config()
+    site_config = frappe.get_site_config()
     
     # Update CORS settings
     cors_settings = {

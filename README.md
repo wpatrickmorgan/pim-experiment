@@ -195,8 +195,8 @@ The frontend runs on `http://localhost:3000` and connects to your local Frappe b
 # Check backend CORS configuration
 cd backend
 bench --site your-site console
->>> from frappe.utils import get_site_config
->>> print(get_site_config())
+>>> import frappe
+>>> print(frappe.get_site_config())
 
 # Test API connectivity
 curl -v https://your-backend-domain.com/api/method/imperium_pim.api.ping
@@ -263,4 +263,3 @@ If you encounter issues:
 ---
 
 **🎉 You're all set!** Your PIM system now runs with modern separate deployment architecture - frontend on Vercel's global CDN and backend on your Frappe site.
-
