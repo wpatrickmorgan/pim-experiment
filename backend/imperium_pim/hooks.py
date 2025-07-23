@@ -272,18 +272,9 @@ after_install = "imperium_pim.utils.setup_module"
 # Hook to run after migration
 after_migrate = "imperium_pim.utils.sync_desktop_icons"
 
-# Frontend build hooks
-# --------------------
-# Build frontend after app installation
-def after_app_install(app_name):
-    if app_name == "imperium_pim":
-        try:
-            from imperium_pim.commands.build_frontend import execute
-            execute()
-        except Exception as e:
-            print(f"Warning: Frontend build failed during installation: {e}")
-            print("You can manually build the frontend later using:")
-            print("bench --site [site] execute imperium_pim.commands.build_frontend")
+# App installation hooks
+# ---------------------
+# No frontend build needed for Vercel deployment
 
 # Automatically update python controller files with type annotations for this app.
 # export_python_type_annotations = True
