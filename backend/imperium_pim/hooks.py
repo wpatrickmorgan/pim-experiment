@@ -285,5 +285,4 @@ after_migrate = "imperium_pim.utils.sync_desktop_icons"
 
 # Custom bench commands
 # ---------------------
-# Register custom bench commands for this app
-from imperium_pim.commands import commands
+# No custom bench commands needed for standard Frappe deployment
