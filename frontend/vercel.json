@@ -1,14 +1,4 @@
 {
-  "buildCommand": "npm run build",
-  "outputDirectory": "out",
-  "trailingSlash": true,
-  "cleanUrls": false,
-  "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/index.html"
-    }
-  ],
   "headers": [
     {
       "source": "/(.*)",
@@ -37,4 +27,3 @@
     "DEPLOYMENT_MODE": "separate"
   }
 }
-
