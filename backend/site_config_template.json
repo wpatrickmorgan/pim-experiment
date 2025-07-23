@@ -1,0 +1,25 @@
+{
+  "db_name": "your_database_name",
+  "db_password": "your_database_password",
+  "allow_cors": "*",
+  "cors_origins": [
+    "https://pim-experiment.vercel.app",
+    "https://pim-experiment-git-main.vercel.app",
+    "http://localhost:3000"
+  ],
+  "cors_headers": [
+    "Authorization",
+    "Content-Type",
+    "X-Requested-With",
+    "Accept",
+    "Origin",
+    "Cache-Control",
+    "X-Frappe-CSRF-Token",
+    "X-Frappe-CMD"
+  ],
+  "allow_cors_credentials": true,
+  "session_cookie_samesite": "None",
+  "session_cookie_secure": true,
+  "csrf_cookie_samesite": "None",
+  "csrf_cookie_secure": true
+}
