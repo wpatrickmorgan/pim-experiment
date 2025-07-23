@@ -71,33 +71,71 @@ class ApiClient {
       
       if (!response.ok) {
         // Enhanced error handling for cross-origin requests
-        let errorMessage = `HTTP error! status: ${response.status}`;
+        let errorMessage = `HTTP ${response.status}: ${response.statusText}`;
+        let errorDetails = '';
         
-        if (response.status === 0 || response.status === 404) {
-          errorMessage += isCrossOrigin 
-            ? ' - Check if backend server is running and CORS is configured'
-            : ' - Check if API endpoint exists';
+        if (response.status === 0) {
+          errorMessage = 'Network Error';
+          errorDetails = isCrossOrigin 
+            ? 'Cannot reach backend server. Check if the backend URL is correct and the server is running.'
+            : 'Network request failed. Check your internet connection.';
+        } else if (response.status === 404) {
+          errorDetails = isCrossOrigin 
+            ? 'API endpoint not found. Check if the backend server is running and the endpoint path is correct.'
+            : 'API endpoint not found. Check if the endpoint exists.';
         } else if (response.status === 403) {
-          errorMessage += ' - Authentication required or CORS blocked';
+          errorDetails = 'Access forbidden. This could be due to CORS policy, authentication, or authorization issues.';
+        } else if (response.status === 500) {
+          errorDetails = 'Internal server error. Check backend logs for details.';
+        } else if (response.status >= 400 && response.status < 500) {
+          errorDetails = 'Client error. Check request parameters and authentication.';
+        } else if (response.status >= 500) {
+          errorDetails = 'Server error. The backend service may be experiencing issues.';
         }
         
-        throw new Error(errorMessage);
+        // Try to get error details from response body
+        try {
+          const errorBody = await response.text();
+          if (errorBody) {
+            errorDetails += ` Response: ${errorBody.substring(0, 200)}`;
+          }
+        } catch (e) {
+          // Ignore if we can't read the response body
+        }
+        
+        const fullError = errorDetails ? `${errorMessage} - ${errorDetails}` : errorMessage;
+        throw new Error(fullError);
       }
 
       const data: FrappeResponse<T> = await response.json();
       
       if (data.exc) {
-        throw new Error(data.exc);
+        throw new Error(`Backend Error: ${data.exc}`);
       }
 
       return data.message;
     } catch (error) {
-      console.error('API request failed:', {
+      // Enhanced error logging
+      const errorInfo = {
         url,
-        error,
+        method: config.method || 'GET',
         isCrossOrigin,
-        config: { ...config, headers: 'redacted' }
-      });
+        timestamp: new Date().toISOString(),
+        error: error instanceof Error ? error.message : 'Unknown error',
+        config: {
+          credentials: config.credentials,
+          mode: config.mode,
+          headers: config.headers
+        }
+      };
+      
+      console.error('API request failed:', errorInfo);
+      
+      // Re-throw with additional context for network errors
+      if (error instanceof TypeError && error.message.includes('fetch')) {
+        throw new Error(`Network Error: Unable to connect to ${this.baseUrl}. Check if the backend server is running and accessible.`);
+      }
+      
       throw error;
     }
   }
@@ -121,7 +159,7 @@ class ApiClient {
 
   // Test connectivity
   async ping() {
-    return this.request<{ status: string; message: string; timestamp: string }>('/method/imperium_pim.api.ping');
+    return this.request<{ status: string; message: string; timestamp: string }>('/method/imperium_pim.api.ping.ping');
   }
 
   // Health check for separate deployment
@@ -156,16 +194,16 @@ class ApiClient {
 
   // Dashboard data
   async getDashboardStats(): Promise<DashboardStats> {
-    return this.request<DashboardStats>('/method/imperium_pim.api.get_dashboard_stats');
+    return this.request<DashboardStats>('/method/imperium_pim.api.dashboard.get_dashboard_stats');
   }
 
   // Products
   async getProducts(limit: number = 20, offset: number = 0): Promise<Product[]> {
-    return this.request<Product[]>(`/method/imperium_pim.api.get_products?limit=${limit}&offset=${offset}`);
+    return this.request<Product[]>(`/method/imperium_pim.api.items.get_item_list?limit=${limit}&offset=${offset}`);
   }
 
   async getProduct(name: string): Promise<Product> {
-    return this.request<Product>(`/method/imperium_pim.api.get_product?name=${encodeURIComponent(name)}`);
+    return this.request<Product>(`/method/imperium_pim.api.items.get_item_details?item_id=${encodeURIComponent(name)}`);
   }
 
   // Generic DocType operations
