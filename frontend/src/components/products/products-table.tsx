@@ -93,7 +93,7 @@ const products = [
   },
 ];
 
-function getStatusVariant(status: string) {
+function getStatusVariant(status: string): "success" | "draft" | "warning" | "default" {
   switch (status) {
     case "Active":
       return "success";
@@ -204,7 +204,7 @@ export function ProductsTable() {
                   </td>
                   <td className="px-6 py-4">
                     <Badge
-                      variant={getStatusVariant(product.status) as any}
+                      variant={getStatusVariant(product.status)}
                       className="text-xs"
                     >
                       {product.status}
