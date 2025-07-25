@@ -36,13 +36,14 @@ USER frappe
 # Set working directory
 WORKDIR /home/frappe/frappe-bench
 
-# Copy startup script
+# Copy startup script and configuration files
 COPY --chown=frappe:frappe start-dev.sh /home/frappe/start-dev.sh
 COPY --chown=frappe:frappe site_config.json.template /home/frappe/site_config.json.template
+COPY --chown=frappe:frappe init_db.py /home/frappe/init_db.py
 
 # Make startup script executable
 USER root
-RUN chmod +x /home/frappe/start-dev.sh
+RUN chmod +x /home/frappe/start-dev.sh /home/frappe/init_db.py
 USER frappe
 
 # Expose ports for web server and socketio

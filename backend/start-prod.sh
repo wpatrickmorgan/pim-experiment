@@ -114,6 +114,10 @@ fi
 # Change to bench directory
 cd /home/frappe/frappe-bench
 
+# Initialize database SQL mode for MariaDB compatibility
+echo "🔧 Initializing database SQL mode..."
+python3 /home/frappe/init_db.py
+
 # Check if site exists, create if it doesn't
 if [ ! -d "sites/${SITE_NAME}" ]; then
     echo "🏗️  Creating new site: ${SITE_NAME}"
