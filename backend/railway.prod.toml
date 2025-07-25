@@ -1,0 +1,48 @@
+# Railway Production Configuration for Frappe/ERPNext
+[build]
+builder = "dockerfile"
+dockerfilePath = "Dockerfile.prod"
+
+[deploy]
+startCommand = "/home/frappe/start-prod.sh"
+healthcheckPath = "/api/method/frappe.utils.change_log.get_versions"
+healthcheckTimeout = 300
+restartPolicyType = "always"
+restartPolicyMaxRetries = 10
+
+# Production environment variables
+[env]
+FRAPPE_ENV = "production"
+DEVELOPER_MODE = "0"
+PYTHONUNBUFFERED = "1"
+
+# Site configuration
+SITE_NAME = { default = "mysite" }
+ADMIN_PASSWORD = { required = true }
+
+# Production specific settings
+FRAPPE_LOGGING_LEVEL = "INFO"
+WORKERS = "4"
+TIMEOUT = "120"
+
+# Security settings
+ALLOW_CORS = ""
+CORS_ORIGIN_WHITELIST = ""
+
+# Production port
+PORT = "8000"
+
+# Performance settings
+GUNICORN_WORKERS = "4"
+GUNICORN_TIMEOUT = "120"
+GUNICORN_KEEPALIVE = "5"
+
+# Database and Redis will be provided by Railway services
+# These will be automatically injected:
+# DATABASE_URL
+# REDIS_URL
+# RAILWAY_PUBLIC_DOMAIN
+
+[experimental]
+configFilePath = "railway.prod.toml"
+
