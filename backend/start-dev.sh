@@ -36,6 +36,7 @@ fi
 # Parse REDIS_URL if provided by Railway
 if [ ! -z "$REDIS_URL" ]; then
     echo "🔴 Parsing Railway REDIS_URL..."
+    echo "📋 REDIS_URL format: ${REDIS_URL}"
     # Extract Redis connection details
     REDIS_HOST=$(echo $REDIS_URL | sed -n 's/.*:\/\/[^@]*@\([^:]*\):.*/\1/p')
     REDIS_PORT=$(echo $REDIS_URL | sed -n 's/.*:\([0-9]*\)$/\1/p')
@@ -43,6 +44,9 @@ if [ ! -z "$REDIS_URL" ]; then
     
     export REDIS_HOST REDIS_PORT REDIS_PASSWORD
     echo "✅ Redis configuration parsed successfully"
+    echo "🔍 Redis Host: ${REDIS_HOST}"
+    echo "🔍 Redis Port: ${REDIS_PORT}"
+    echo "🔍 Redis Password: [REDACTED]"
 else
     echo "⚠️  No REDIS_URL provided, using defaults"
     export REDIS_HOST=${REDIS_HOST:-"localhost"}
@@ -135,9 +139,19 @@ bench use ${SITE_NAME}
 echo "🔧 Updating site configuration..."
 bench --site ${SITE_NAME} set-config db_host ${DB_HOST}
 bench --site ${SITE_NAME} set-config db_port ${DB_PORT}
-bench --site ${SITE_NAME} set-config redis_cache "redis://${REDIS_HOST}:${REDIS_PORT}/0"
-bench --site ${SITE_NAME} set-config redis_queue "redis://${REDIS_HOST}:${REDIS_PORT}/1"
-bench --site ${SITE_NAME} set-config redis_socketio "redis://${REDIS_HOST}:${REDIS_PORT}/2"
+
+# Configure Redis with authentication if password is provided
+if [ ! -z "$REDIS_PASSWORD" ]; then
+    echo "🔐 Configuring Redis with authentication..."
+    bench --site ${SITE_NAME} set-config redis_cache "redis://:${REDIS_PASSWORD}@${REDIS_HOST}:${REDIS_PORT}/0"
+    bench --site ${SITE_NAME} set-config redis_queue "redis://:${REDIS_PASSWORD}@${REDIS_HOST}:${REDIS_PORT}/1"
+    bench --site ${SITE_NAME} set-config redis_socketio "redis://:${REDIS_PASSWORD}@${REDIS_HOST}:${REDIS_PORT}/2"
+else
+    echo "🔓 Configuring Redis without authentication..."
+    bench --site ${SITE_NAME} set-config redis_cache "redis://${REDIS_HOST}:${REDIS_PORT}/0"
+    bench --site ${SITE_NAME} set-config redis_queue "redis://${REDIS_HOST}:${REDIS_PORT}/1"
+    bench --site ${SITE_NAME} set-config redis_socketio "redis://${REDIS_HOST}:${REDIS_PORT}/2"
+fi
 
 # Set CORS configuration for development
 if [ ! -z "$RAILWAY_PUBLIC_DOMAIN" ]; then
@@ -157,4 +171,3 @@ echo "👤 Admin credentials: Administrator / ${ADMIN_PASSWORD}"
 
 # Start bench serve with development settings
 exec bench serve --port 8000 --host 0.0.0.0
-

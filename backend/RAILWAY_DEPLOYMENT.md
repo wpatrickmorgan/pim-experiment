@@ -47,8 +47,10 @@ SECRET_KEY=your-secret-key
 
 ### Auto-Provided by Railway
 These are automatically provided by Railway services:
-- `DATABASE_URL` - MariaDB connection string
-- `REDIS_URL` - Redis connection string  
+- `DATABASE_URL` - MariaDB connection string (format: `mysql://user:password@host:port/database`)
+- `REDIS_URL` - Redis connection string (format: `redis://default:password@host:port`)
+
+**Note**: The startup scripts automatically parse these URLs and configure Frappe with the correct Redis authentication.  
 - `RAILWAY_PUBLIC_DOMAIN` - Your app's public domain
 
 ## 🛠️ Development Deployment
@@ -176,7 +178,21 @@ Railway will show this message when it finds the Dockerfile:
 ==========================Using detected Dockerfile!==========================
 ```
 
-#### 1. Database Connection Failed
+#### Redis Connection Issues
+If your app can't connect to Redis, check:
+
+1. **Redis Service**: Ensure Redis service is added to your Railway project
+2. **REDIS_URL Variable**: Verify `REDIS_URL` is automatically set by Railway
+3. **URL Format**: Railway provides Redis URLs like `redis://default:[password]@redis.railway.internal:6379`
+4. **Authentication**: The startup scripts automatically parse the password and configure Frappe
+5. **Debug Logs**: Check deployment logs for Redis parsing messages:
+   ```
+   🔴 Parsing Railway REDIS_URL...
+   ✅ Redis configuration parsed successfully
+   🔐 Configuring Redis with authentication...
+   ```
+
+#### Database Connection Failed
 ```bash
 # Check DATABASE_URL is set
 railway variables
