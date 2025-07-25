@@ -5,6 +5,12 @@
   "db_user": "${DB_USER}",
   "db_password": "${DB_PASSWORD}",
   "db_type": "mariadb",
+  "db_socket": "",
+  "db_ssl_ca": "",
+  "db_ssl_cert": "",
+  "db_ssl_key": "",
+  "db_charset": "utf8mb4",
+  "db_collation": "utf8mb4_unicode_ci",
   
   "redis_cache": "redis://:${REDIS_PASSWORD}@${REDIS_HOST}:${REDIS_PORT}/0",
   "redis_queue": "redis://:${REDIS_PASSWORD}@${REDIS_HOST}:${REDIS_PORT}/1",
