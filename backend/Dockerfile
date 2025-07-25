@@ -21,6 +21,7 @@ RUN apt-get update && apt-get install -y \
     iputils-ping \
     procps \
     redis-tools \
+    mysql-client \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Python development tools

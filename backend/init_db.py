@@ -6,7 +6,7 @@ This script sets the SQL mode to be more permissive for TEXT/BLOB default values
 
 import os
 import sys
-import MySQLdb
+import subprocess
 from urllib.parse import urlparse
 
 def init_database():
@@ -21,44 +21,51 @@ def init_database():
     try:
         parsed = urlparse(database_url)
         
-        # Connect to database
-        print("🔧 Connecting to database to set SQL mode...")
-        conn = MySQLdb.connect(
-            host=parsed.hostname,
-            port=parsed.port or 3306,
-            user=parsed.username,
-            passwd=parsed.password,
-            db=parsed.path.lstrip('/'),
-            charset='utf8mb4'
-        )
-        
-        cursor = conn.cursor()
+        # Build mysql command
+        mysql_cmd = [
+            'mysql',
+            f'--host={parsed.hostname}',
+            f'--port={parsed.port or 3306}',
+            f'--user={parsed.username}',
+            f'--password={parsed.password}',
+            f'--database={parsed.path.lstrip("/")}',
+            '--execute'
+        ]
         
         # Set SQL mode to be more permissive
         # Remove STRICT_TRANS_TABLES and NO_ZERO_DATE to allow default values for TEXT columns
-        sql_mode_query = """
-        SET SESSION sql_mode = 'ONLY_FULL_GROUP_BY,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION'
-        """
+        sql_commands = [
+            "SET SESSION sql_mode = 'ONLY_FULL_GROUP_BY,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION';",
+            "SELECT @@sql_mode;"
+        ]
         
-        cursor.execute(sql_mode_query)
+        print("🔧 Connecting to database to set SQL mode...")
         
-        # Also set it globally if we have permissions
-        try:
-            global_sql_mode_query = """
-            SET GLOBAL sql_mode = 'ONLY_FULL_GROUP_BY,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION'
-            """
-            cursor.execute(global_sql_mode_query)
-            print("✅ Set global SQL mode successfully")
-        except MySQLdb.Error as e:
-            print(f"⚠️  Could not set global SQL mode (this is normal for Railway): {e}")
-        
-        # Verify current SQL mode
-        cursor.execute("SELECT @@sql_mode")
-        current_mode = cursor.fetchone()[0]
-        print(f"✅ Current SQL mode: {current_mode}")
-        
-        cursor.close()
-        conn.close()
+        for sql_command in sql_commands:
+            cmd = mysql_cmd + [sql_command]
+            
+            try:
+                result = subprocess.run(
+                    cmd,
+                    capture_output=True,
+                    text=True,
+                    timeout=30
+                )
+                
+                if result.returncode == 0:
+                    if "SELECT @@sql_mode" in sql_command:
+                        current_mode = result.stdout.strip().split('\n')[-1]
+                        print(f"✅ Current SQL mode: {current_mode}")
+                    else:
+                        print("✅ SQL mode set successfully")
+                else:
+                    print(f"⚠️  Command failed: {sql_command}")
+                    print(f"Error: {result.stderr}")
+                    
+            except subprocess.TimeoutExpired:
+                print(f"⚠️  Command timed out: {sql_command}")
+            except Exception as e:
+                print(f"⚠️  Error executing command: {e}")
         
         print("✅ Database SQL mode configured successfully")
         return True
