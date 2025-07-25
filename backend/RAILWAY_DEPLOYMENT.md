@@ -104,8 +104,8 @@ railway variables set DEVELOPER_MODE=0
 railway variables set SITE_NAME=mysite
 railway variables set ADMIN_PASSWORD=your_secure_password
 
-# For production, copy the production config and deploy
-cp railway.prod.toml railway.toml
+# For production, set the Dockerfile path and deploy
+railway variables set RAILWAY_DOCKERFILE_PATH=Dockerfile.prod
 railway up
 ```
 
@@ -154,14 +154,27 @@ To switch from development to production:
 railway variables set FRAPPE_ENV=production
 railway variables set DEVELOPER_MODE=0
 
-# Copy production config and redeploy
-cp railway.prod.toml railway.toml
+# Set production Dockerfile and redeploy
+railway variables set RAILWAY_DOCKERFILE_PATH=Dockerfile.prod
 railway up
 ```
 
 ## 🔍 Troubleshooting
 
 ### Common Issues
+
+#### "Dockerfile does not exist" Error
+If you're getting this error, ensure:
+
+1. **Root Directory**: Set Railway's root directory to `backend` in your service settings
+2. **Dockerfile Name**: The file must be named exactly `Dockerfile` (with capital D)
+3. **No Conflicting Config**: Remove any `dockerfilePath` from railway.toml to let Railway auto-detect
+4. **For Production**: Use `railway variables set RAILWAY_DOCKERFILE_PATH=Dockerfile.prod` instead of copying files
+
+Railway will show this message when it finds the Dockerfile:
+```
+==========================Using detected Dockerfile!==========================
+```
 
 #### 1. Database Connection Failed
 ```bash
