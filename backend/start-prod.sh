@@ -125,7 +125,8 @@ if [ ! -d "sites/${SITE_NAME}" ]; then
         --db-port ${DB_PORT} \
         --db-name ${DB_NAME} \
         --db-user ${DB_USER} \
-        --db-password ${DB_PASSWORD}
+        --db-password ${DB_PASSWORD} \
+        --force
     
     echo "✅ Site created successfully!"
 else
@@ -155,7 +156,17 @@ fi
 
 # Create site configuration from template
 echo "📝 Creating site configuration..."
-envsubst < /home/frappe/site_config.json.template > sites/${SITE_NAME}/site_config.json
+
+# Use sed to replace variables with their values (envsubst doesn't handle defaults well)
+sed -e "s/\${DEVELOPER_MODE:-false}/${DEVELOPER_MODE}/g" \
+    -e "s/\${FRAPPE_LOGGING_LEVEL:-INFO}/${FRAPPE_LOGGING_LEVEL}/g" \
+    -e "s/\${MAIL_PORT:-587}/${MAIL_PORT}/g" \
+    -e "s/\${MAIL_USE_TLS:-true}/${MAIL_USE_TLS}/g" \
+    -e "s/\${WORKERS:-4}/${WORKERS}/g" \
+    -e "s/\${GUNICORN_WORKERS:-4}/${GUNICORN_WORKERS}/g" \
+    -e "s/\${GUNICORN_TIMEOUT:-120}/${GUNICORN_TIMEOUT}/g" \
+    -e "s/\${GUNICORN_KEEPALIVE:-5}/${GUNICORN_KEEPALIVE}/g" \
+    /home/frappe/site_config.json.template | envsubst > sites/${SITE_NAME}/site_config.json
 
 # Validate JSON syntax
 if ! python3 -m json.tool sites/${SITE_NAME}/site_config.json > /dev/null 2>&1; then
