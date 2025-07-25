@@ -1,3 +1,30 @@
-# Add any specific requirements for imperium_pim here
-frappe
+# Additional Python dependencies for Frappe/ERPNext on Railway
+# These are in addition to the base frappe/erpnext:latest image
+
+# Development tools (only installed in dev mode)
+ipython>=8.0.0
+ipdb>=0.13.0
+watchdog>=2.1.0
+python-dotenv>=0.19.0
+
+# Production monitoring and logging
+gunicorn>=20.1.0
+gevent>=21.12.0
+
+# Database and Redis clients (if not included in base image)
+pymysql>=1.0.0
+redis>=4.0.0
+
+# Additional utilities
+requests>=2.28.0
+python-dateutil>=2.8.0
+
+# Security enhancements
+cryptography>=3.4.0
+
+# Performance monitoring
+psutil>=5.8.0
+
+# Environment variable processing
+envsubst>=0.1.0
 

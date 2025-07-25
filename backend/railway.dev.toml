@@ -1,0 +1,44 @@
+# Railway Development Configuration for Frappe/ERPNext
+[build]
+builder = "dockerfile"
+dockerfilePath = "Dockerfile.dev"
+
+[deploy]
+startCommand = "/home/frappe/start-dev.sh"
+healthcheckPath = "/"
+healthcheckTimeout = 300
+restartPolicyType = "on_failure"
+restartPolicyMaxRetries = 3
+
+# Development environment variables
+[env]
+FRAPPE_ENV = "development"
+DEVELOPER_MODE = "1"
+PYTHONUNBUFFERED = "1"
+
+# Site configuration
+SITE_NAME = { default = "localhost" }
+ADMIN_PASSWORD = { default = "admin123" }
+
+# Development specific settings
+BENCH_DEVELOPER_FLAG = "1"
+FRAPPE_LOGGING_LEVEL = "DEBUG"
+
+# CORS settings for development
+ALLOW_CORS = "*"
+CORS_ORIGIN_WHITELIST = "http://localhost:3000,http://localhost:8080"
+
+# Development ports
+PORT = "8000"
+SOCKETIO_PORT = "9000"
+
+# Database and Redis will be provided by Railway services
+# These will be automatically injected:
+# DATABASE_URL
+# REDIS_URL
+# RAILWAY_PUBLIC_DOMAIN
+
+[experimental]
+# Enable file watching for development
+configFilePath = "railway.dev.toml"
+

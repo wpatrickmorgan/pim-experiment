@@ -1,0 +1,43 @@
+# Production Dockerfile for Frappe/ERPNext on Railway
+FROM frappe/erpnext:latest
+
+# Set environment variables for production
+ENV FRAPPE_ENV=production
+ENV DEVELOPER_MODE=0
+ENV PYTHONUNBUFFERED=1
+
+# Install minimal production dependencies
+USER root
+
+# Install only essential tools for production
+RUN apt-get update && apt-get install -y \
+    curl \
+    wget \
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get clean
+
+# Switch back to frappe user
+USER frappe
+
+# Set working directory
+WORKDIR /home/frappe/frappe-bench
+
+# Copy startup script and configuration template
+COPY --chown=frappe:frappe start-prod.sh /home/frappe/start-prod.sh
+COPY --chown=frappe:frappe site_config.json.template /home/frappe/site_config.json.template
+
+# Make startup script executable
+USER root
+RUN chmod +x /home/frappe/start-prod.sh
+USER frappe
+
+# Expose port for web server
+EXPOSE 8000
+
+# Health check for production with longer timeout
+HEALTHCHECK --interval=60s --timeout=30s --start-period=120s --retries=5 \
+    CMD curl -f http://localhost:8000/api/method/frappe.utils.change_log.get_versions || exit 1
+
+# Set the startup command
+CMD ["/home/frappe/start-prod.sh"]
+
