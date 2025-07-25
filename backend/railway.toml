@@ -41,4 +41,3 @@ SOCKETIO_PORT = "9000"
 [experimental]
 # Enable file watching for development
 configFilePath = "railway.dev.toml"
-

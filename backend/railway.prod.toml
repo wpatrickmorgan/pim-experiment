@@ -45,4 +45,3 @@ GUNICORN_KEEPALIVE = "5"
 
 [experimental]
 configFilePath = "railway.prod.toml"
-
