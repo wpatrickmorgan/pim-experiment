@@ -8,6 +8,7 @@ This guide explains how to deploy your Frappe/ERPNext backend on Railway.app wit
 1. Railway account at [railway.app](https://railway.app)
 2. Railway CLI installed: `npm install -g @railway/cli`
 3. This repository with the Railway configuration files
+4. **Important**: Configure Railway to use the `backend` directory as the build context in your Railway project settings
 
 ### Environment Setup
 
@@ -67,7 +68,7 @@ railway variables set DEVELOPER_MODE=1
 railway variables set SITE_NAME=localhost
 railway variables set ADMIN_PASSWORD=admin123
 
-# Deploy using development configuration (railway.toml in root)
+# Deploy using development configuration (uses railway.toml by default)
 railway up
 ```
 
@@ -104,7 +105,7 @@ railway variables set SITE_NAME=mysite
 railway variables set ADMIN_PASSWORD=your_secure_password
 
 # For production, copy the production config and deploy
-cp backend/railway.prod.toml railway.toml
+cp railway.prod.toml railway.toml
 railway up
 ```
 
@@ -131,18 +132,17 @@ railway variables set CORS_ORIGIN_WHITELIST=https://yourdomain.com
 
 ### File Structure
 ```
-project-root/
-├── railway.toml               # Main Railway config (development)
-└── backend/
-    ├── Dockerfile             # Development container
-    ├── Dockerfile.prod        # Production container
-    ├── railway.prod.toml      # Production Railway config
-    ├── start-dev.sh          # Development startup script
-    ├── start-prod.sh         # Production startup script
-    ├── site_config.json.template  # Site configuration template
-    ├── .railwayignore        # Files to exclude from builds
-    ├── requirements.txt      # Additional Python dependencies
-    └── RAILWAY_DEPLOYMENT.md # This documentation
+backend/                       # Railway build context directory
+├── Dockerfile                 # Development container
+├── Dockerfile.prod           # Production container
+├── railway.toml              # Development Railway config
+├── railway.prod.toml         # Production Railway config
+├── start-dev.sh             # Development startup script
+├── start-prod.sh            # Production startup script
+├── site_config.json.template # Site configuration template
+├── .railwayignore           # Files to exclude from builds
+├── requirements.txt         # Additional Python dependencies
+└── RAILWAY_DEPLOYMENT.md    # This documentation
 ```
 
 ### Switching Between Modes
@@ -155,7 +155,7 @@ railway variables set FRAPPE_ENV=production
 railway variables set DEVELOPER_MODE=0
 
 # Copy production config and redeploy
-cp backend/railway.prod.toml railway.toml
+cp railway.prod.toml railway.toml
 railway up
 ```
 
