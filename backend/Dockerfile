@@ -20,6 +20,7 @@ RUN apt-get update && apt-get install -y \
     tree \
     iputils-ping \
     procps \
+    redis-tools \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Python development tools
