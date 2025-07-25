@@ -9,7 +9,7 @@ ENV PYTHONUNBUFFERED=1
 # Install development tools and dependencies
 USER root
 
-# Install additional development tools
+# Install additional development tools (only essential ones to avoid conflicts)
 RUN apt-get update && apt-get install -y \
     vim \
     nano \
@@ -19,8 +19,6 @@ RUN apt-get update && apt-get install -y \
     htop \
     tree \
     iputils-ping \
-    telnet \
-    netcat \
     procps \
     && rm -rf /var/lib/apt/lists/*
 
@@ -55,4 +53,3 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
 
 # Set the startup command
 CMD ["/home/frappe/start-dev.sh"]
-
