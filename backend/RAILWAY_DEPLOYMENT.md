@@ -183,7 +183,7 @@ If your app can't connect to Redis, check:
 
 1. **Redis Service**: Ensure Redis service is added to your Railway project
 2. **REDIS_URL Variable**: Verify `REDIS_URL` is automatically set by Railway
-3. **URL Format**: Railway provides Redis URLs like `redis://default:password@redis.railway.internal:6379`
+3. **URL Format**: Railway provides Redis URLs like `redis://default:[password]@redis.railway.internal:6379`
 4. **Authentication**: The startup scripts automatically parse the password and configure Frappe
 5. **Debug Logs**: Check deployment logs for Redis parsing messages:
    ```
