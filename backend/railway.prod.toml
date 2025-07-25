@@ -1,7 +1,6 @@
 # Railway Production Configuration for Frappe/ERPNext
 [build]
 builder = "dockerfile"
-dockerfilePath = "Dockerfile.prod"
 
 [deploy]
 startCommand = "/home/frappe/start-prod.sh"
