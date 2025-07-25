@@ -77,22 +77,37 @@ fi
 
 # Wait for Redis to be ready
 echo "⏳ Waiting for Redis to be ready..."
-attempt=1
 
-while [ $attempt -le $max_attempts ]; do
-    if redis-cli -h "$REDIS_HOST" -p "$REDIS_PORT" ${REDIS_PASSWORD:+-a "$REDIS_PASSWORD"} ping > /dev/null 2>&1; then
-        echo "✅ Redis is ready!"
-        break
-    else
-        echo "🔄 Attempt $attempt/$max_attempts: Redis not ready, waiting 3 seconds..."
-        sleep 3
-        attempt=$((attempt + 1))
+# Check if redis-cli is available
+if ! command -v redis-cli > /dev/null 2>&1; then
+    echo "⚠️  redis-cli not found, skipping Redis connectivity test"
+    echo "✅ Assuming Redis is ready (will be tested during Frappe startup)"
+else
+    attempt=1
+    
+    while [ $attempt -le $max_attempts ]; do
+        # Test Redis connection with detailed error output
+        if [ ! -z "$REDIS_PASSWORD" ]; then
+            redis_test_output=$(redis-cli -h "$REDIS_HOST" -p "$REDIS_PORT" -a "$REDIS_PASSWORD" ping 2>&1)
+        else
+            redis_test_output=$(redis-cli -h "$REDIS_HOST" -p "$REDIS_PORT" ping 2>&1)
+        fi
+        
+        if echo "$redis_test_output" | grep -q "PONG"; then
+            echo "✅ Redis is ready!"
+            break
+        else
+            echo "🔄 Attempt $attempt/$max_attempts: Redis not ready, waiting 3 seconds..."
+            echo "🔍 Redis test output: $redis_test_output"
+            sleep 3
+            attempt=$((attempt + 1))
+        fi
+    done
+    
+    if [ $attempt -gt $max_attempts ]; then
+        echo "❌ Redis failed to become ready after $max_attempts attempts"
+        echo "⚠️  Continuing anyway - Frappe will test Redis connection during startup"
     fi
-done
-
-if [ $attempt -gt $max_attempts ]; then
-    echo "❌ Redis failed to become ready after $max_attempts attempts"
-    exit 1
 fi
 
 # Change to bench directory
