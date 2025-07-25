@@ -14,7 +14,7 @@ RUN apt-get update && apt-get install -y \
     curl \
     wget \
     redis-tools \
-    mysql-client \
+    default-mysql-client \
     && rm -rf /var/lib/apt/lists/* \
     && apt-get clean
 
