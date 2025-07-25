@@ -113,10 +113,6 @@ fi
 # Change to bench directory
 cd /home/frappe/frappe-bench
 
-# Create site configuration from template
-echo "📝 Creating site configuration..."
-envsubst < /home/frappe/site_config.json.template > sites/${SITE_NAME}/site_config.json
-
 # Check if site exists, create if it doesn't
 if [ ! -d "sites/${SITE_NAME}" ]; then
     echo "🏗️  Creating new site: ${SITE_NAME}"
@@ -134,6 +130,10 @@ if [ ! -d "sites/${SITE_NAME}" ]; then
 else
     echo "✅ Site ${SITE_NAME} already exists"
 fi
+
+# Create site configuration from template
+echo "📝 Creating site configuration..."
+envsubst < /home/frappe/site_config.json.template > sites/${SITE_NAME}/site_config.json
 
 # Install ERPNext app if not already installed
 if ! bench --site ${SITE_NAME} list-apps | grep -q "erpnext"; then
