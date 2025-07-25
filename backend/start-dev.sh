@@ -131,9 +131,40 @@ else
     echo "✅ Site ${SITE_NAME} already exists"
 fi
 
+# Set default values for optional environment variables
+export DEVELOPER_MODE=${DEVELOPER_MODE:-true}
+export FRAPPE_LOGGING_LEVEL=${FRAPPE_LOGGING_LEVEL:-INFO}
+export WORKERS=${WORKERS:-4}
+export GUNICORN_WORKERS=${GUNICORN_WORKERS:-4}
+export GUNICORN_TIMEOUT=${GUNICORN_TIMEOUT:-120}
+export GUNICORN_KEEPALIVE=${GUNICORN_KEEPALIVE:-5}
+export MAIL_PORT=${MAIL_PORT:-587}
+export MAIL_USE_TLS=${MAIL_USE_TLS:-true}
+
+# Generate encryption keys if not provided
+if [ -z "$ENCRYPTION_KEY" ]; then
+    export ENCRYPTION_KEY=$(openssl rand -base64 32)
+    echo "🔐 Generated encryption key"
+fi
+
+if [ -z "$SECRET_KEY" ]; then
+    export SECRET_KEY=$(openssl rand -base64 32)
+    echo "🔐 Generated secret key"
+fi
+
 # Create site configuration from template
 echo "📝 Creating site configuration..."
 envsubst < /home/frappe/site_config.json.template > sites/${SITE_NAME}/site_config.json
+
+# Validate JSON syntax
+if ! python3 -m json.tool sites/${SITE_NAME}/site_config.json > /dev/null 2>&1; then
+    echo "❌ Invalid JSON in site_config.json"
+    echo "🔍 Contents of site_config.json:"
+    cat sites/${SITE_NAME}/site_config.json
+    exit 1
+else
+    echo "✅ Site configuration JSON is valid"
+fi
 
 # Install ERPNext app if not already installed
 if ! bench --site ${SITE_NAME} list-apps | grep -q "erpnext"; then
