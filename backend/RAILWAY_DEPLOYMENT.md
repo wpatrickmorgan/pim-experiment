@@ -67,8 +67,8 @@ railway variables set DEVELOPER_MODE=1
 railway variables set SITE_NAME=localhost
 railway variables set ADMIN_PASSWORD=admin123
 
-# Deploy using development configuration
-railway up --dockerfile backend/Dockerfile.dev
+# Deploy using development configuration (railway.toml in root)
+railway up
 ```
 
 ### 2. Development Features
@@ -103,8 +103,9 @@ railway variables set DEVELOPER_MODE=0
 railway variables set SITE_NAME=mysite
 railway variables set ADMIN_PASSWORD=your_secure_password
 
-# Deploy using production configuration
-railway up --dockerfile backend/Dockerfile.prod
+# For production, copy the production config and deploy
+cp backend/railway.prod.toml railway.toml
+railway up
 ```
 
 ### 2. Production Features
@@ -130,17 +131,18 @@ railway variables set CORS_ORIGIN_WHITELIST=https://yourdomain.com
 
 ### File Structure
 ```
-backend/
-├── Dockerfile.dev              # Development container
-├── Dockerfile.prod             # Production container
-├── railway.dev.toml            # Development Railway config
-├── railway.prod.toml           # Production Railway config
-├── start-dev.sh               # Development startup script
-├── start-prod.sh              # Production startup script
-├── site_config.json.template  # Site configuration template
-├── .railwayignore             # Files to exclude from builds
-├── requirements.txt           # Additional Python dependencies
-└── RAILWAY_DEPLOYMENT.md      # This documentation
+project-root/
+├── railway.toml               # Main Railway config (development)
+└── backend/
+    ├── Dockerfile             # Development container
+    ├── Dockerfile.prod        # Production container
+    ├── railway.prod.toml      # Production Railway config
+    ├── start-dev.sh          # Development startup script
+    ├── start-prod.sh         # Production startup script
+    ├── site_config.json.template  # Site configuration template
+    ├── .railwayignore        # Files to exclude from builds
+    ├── requirements.txt      # Additional Python dependencies
+    └── RAILWAY_DEPLOYMENT.md # This documentation
 ```
 
 ### Switching Between Modes
@@ -152,8 +154,9 @@ To switch from development to production:
 railway variables set FRAPPE_ENV=production
 railway variables set DEVELOPER_MODE=0
 
-# Redeploy with production Dockerfile
-railway up --dockerfile backend/Dockerfile.prod
+# Copy production config and redeploy
+cp backend/railway.prod.toml railway.toml
+railway up
 ```
 
 ## 🔍 Troubleshooting
@@ -299,4 +302,3 @@ Once deployed, your Frappe/ERPNext instance will be available at your Railway do
 - URL: `https://your-app.railway.app`
 - Username: `Administrator`
 - Password: Your `ADMIN_PASSWORD`
-

@@ -1,7 +1,7 @@
 # Railway Production Configuration for Frappe/ERPNext
 [build]
 builder = "dockerfile"
-dockerfilePath = "Dockerfile.prod"
+dockerfilePath = "backend/Dockerfile.prod"
 
 [deploy]
 startCommand = "/home/frappe/start-prod.sh"
@@ -45,4 +45,3 @@ GUNICORN_KEEPALIVE = "5"
 
 [experimental]
 configFilePath = "railway.prod.toml"
-
